@@ -1,0 +1,759 @@
+/* ==========================================================
+   Estilos base + canvas de fundo (malha interativa)
+   Todas as cores vêm dos tokens semânticos em tokens.css
+   ========================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--cor-fundo);
+}
+
+/* O overflow-x fica SOMENTE no html (raiz): assim o corte
+   horizontal vale para a viewport e o scroll vertical continua
+   sendo da janela (window). Se o body também tivesse overflow-x
+   hidden com height 100%, ele viraria o contêiner de scroll e
+   window.scrollY nunca mudaria, quebrando o auto-hide do header */
+html {
+  overflow-x: hidden;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Tipografia global: toda a aplicação usa o token --fonte-principal
+   (Glory). Nenhum componente declara font-family diretamente */
+body {
+  font-family: var(--fonte-principal);
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto);
+}
+
+body.interagindo {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Home começa invisível — apenas quando o JS está ativo
+   (classe "js" no <html>), para não esconder o conteúdo
+   de quem navega sem JavaScript.
+   Usa a classe .pagina-home (a section clonada do template #home),
+   já que o id "home" pertence ao <template> */
+html.js .pagina-home {
+  opacity: 0;
+  transform: translateY(var(--esp-lg));
+  transition:
+    opacity var(--duracao-lg) var(--ease-padrao),
+    transform var(--duracao-lg) var(--ease-padrao);
+}
+
+/* Quando o preloader terminar, a home aparece.
+   Importante: o transform final é removido (none) para a section
+   não virar containing block de elementos position:fixed */
+html.js body.loaded .pagina-home {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================
+   LOADING - Tela splash (o HTML entrega com display:none;
+   o preloader.js liga display:flex como primeira instrução)
+============================================================*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-preloader);
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================
+   LOADING - CSS para o texto circular ao redor da marca
+============================================================*/
+.circulo-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  transform: translate(-50%, -50%);
+}
+
+.texto-circular {
+  position: absolute;
+  inset: calc(var(--esp-lg) * -1);
+  /* maior que o glass, texto orbita por fora */
+  width: auto;
+  /* deixa o inset mandar */
+  height: auto;
+  animation: girar var(--duracao-giro) linear infinite;
+  pointer-events: none;
+  /* Mantém a rotação no compositor (GPU), em camada própria:
+     sem isso, cada frame do giro invalida a pintura da região
+     do vidro e força o navegador a recalcular o backdrop-filter */
+  will-change: transform;
+
+  user-select: none;
+  -webkit-user-select: none;
+  /* Safari */
+}
+
+.texto-circular text {
+  fill: var(--cor-texto-suave);
+  font-size: var(--texto-sm);
+  letter-spacing: var(--espaco-letras-orbital);
+  text-transform: uppercase;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ==========================================================
+   LOADING - Filtro de distorção .glass
+   ========================================================== */
+
+/* .glass é a superfície de vidro genérica da aplicação:
+   define apenas a aparência (fundo, borda, sombra, distorção).
+   Posição, tamanho e raio ficam a cargo de cada componente */
+.glass {
+  z-index: var(--z-base);
+  background: var(--cor-superficie);
+  border: 0.05px solid var(--cor-borda);
+  box-shadow:
+    inset 1px 1px 1px var(--cor-brilho),
+    inset -1px -1px 1px var(--cor-sombra-interna),
+    0 8px 32px var(--cor-sombra);
+  -webkit-backdrop-filter: url(#liquid-glass) blur(2px);
+  backdrop-filter: url(#liquid-glass) blur(2px);
+  /* Isola o vidro em camada própria de composição, evitando que
+     repaints de vizinhos re-rasterizem o filtro desnecessariamente */
+  transform: translateZ(0);
+}
+
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 20% 15%,
+      var(--cor-brilho-suave),
+      var(--cor-transparente) 35%);
+  pointer-events: none;
+}
+
+@supports not (backdrop-filter: url(#x)) {
+  .glass {
+    -webkit-backdrop-filter: blur(8px) saturate(160%);
+    backdrop-filter: blur(8px) saturate(160%);
+  }
+}
+
+/* Vidro circular do preloader: aqui vive o posicionamento
+   que antes estava direto em .glass */
+.circulo-wrapper .glass {
+  position: absolute;
+  inset: var(--esp-md);
+  border-radius: var(--raio-circulo);
+}
+
+/* Exemplo de segundo vidro quadrado */
+.glass.quadrado {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: var(--raio-md);
+  /* chanfro suave */
+  top: 200px;
+  left: 200px;
+  /* sobe um pouquinho o z-index se precisar ficar mais no topo */
+  z-index: var(--z-elevado);
+}
+
+
+
+/* ==========================================================
+   CSS para a grade interativa (canvas)
+   ========================================================== */
+
+#grid-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--z-fundo);
+  display: block;
+  /* touch-action: none permite capturar o toque sem rolar a página
+     enquanto o usuário interage com a malha */
+  touch-action: none;
+}
+
+
+/* ==========================================================
+   HEADER — fixo no topo, com auto-hide controlado por JS
+   (js/header.js alterna a classe .header--oculto)
+   ========================================================== */
+
+header {
+  position: fixed;
+  top: var(--esp-xl);
+  left: 0;
+  right: 0;
+  /* Mesmo contêiner do conteúdo da home (max-width centrado e o
+     mesmo respiro lateral): assim a marca alinha com o texto em
+     qualquer largura de tela */
+  max-width: 1200px;
+  margin-inline: auto;
+  height: var(--altura-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--esp-md);
+  z-index: var(--z-header);
+  /* O auto-hide é 100% CSS: o JS só troca a classe */
+  transition:
+    transform var(--duracao-md) var(--ease-fluido),
+    opacity var(--duracao-lg) var(--ease-padrao);
+}
+
+/* O -100% sozinho não bastaria: o header parte deslocado
+   var(--esp-xl) do topo, então o deslocamento extra entra na conta */
+header.header--oculto {
+  transform: translateY(calc(-100% - var(--esp-xl)));
+}
+
+/* Durante o loading o header fica invisível (regra só vale com JS
+   ativo, para não sumir com a navegação de quem está sem
+   JavaScript). Ele surge junto com a home, quando o preloader
+   termina e adiciona body.loaded */
+html.js body:not(.loaded) header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Marca com glow lilás */
+.marca-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.marca-link svg {
+  width: auto;
+  height: var(--altura-header);
+  /* O viewBox do symbol (318x249) tem um respiro interno de ~27px
+     à esquerda do desenho (margem do filtro de blur do glow).
+     O margin negativo desconta esse respiro, já proporcional à
+     altura usada, para a borda VISUAL da marca alinhar com a
+     borda do texto do conteúdo */
+  margin-left: calc(var(--altura-header) * -27 / 249);
+  filter: drop-shadow(0 0 10px var(--cor-destaque));
+  transition: filter var(--duracao-md) var(--ease-padrao);
+}
+
+.marca-link:hover svg {
+  filter: drop-shadow(0 0 16px var(--cor-destaque));
+}
+
+/* Botão hambúrguer circular sobre a superfície .glass */
+.botao-menu {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--raio-circulo);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.botao-menu span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: var(--raio-pill);
+  background: var(--cor-texto);
+  transition: transform var(--duracao-xs) var(--ease-fluido),
+    opacity var(--duracao-xs) var(--ease-fluido);
+}
+
+/* Hambúrguer vira X quando o drawer está aberto */
+body.drawer-aberto .botao-menu span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+body.drawer-aberto .botao-menu span:nth-child(2) {
+  opacity: 0;
+}
+
+body.drawer-aberto .botao-menu span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ==========================================================
+   DRAWER — menu lateral aberto pelo hambúrguer
+   ========================================================== */
+
+.drawer-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(320px, 80vw);
+  z-index: var(--z-drawer);
+  border-radius: var(--raio-md) 0 0 var(--raio-md);
+  padding: calc(var(--altura-header) + var(--esp-lg)) var(--esp-lg) var(--esp-lg);
+  transform: translateX(100%);
+  transition: transform var(--duracao-md) var(--ease-fluido);
+  visibility: hidden;
+}
+
+body.drawer-aberto .drawer-menu {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.drawer-menu ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+}
+
+.drawer-menu a {
+  color: var(--cor-texto);
+  text-decoration: none;
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+}
+
+.drawer-menu a:hover {
+  color: var(--cor-marca-media);
+}
+
+/* O hambúrguer precisa continuar clicável acima do drawer */
+body.drawer-aberto header {
+  z-index: calc(var(--z-drawer) + 1);
+}
+
+/* ==========================================================
+   HOME — mobile-first: coluna única na ordem
+   mockups > título > subtítulo > chat
+   ========================================================== */
+
+main {
+  min-height: 100vh;
+}
+
+.pagina-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+  /* O respiro do topo soma o deslocamento do header (--esp-xl)
+     para o conteúdo não começar embaixo dele */
+  padding: calc(var(--altura-header) + var(--esp-xl) + var(--esp-md)) var(--esp-md) var(--esp-xl);
+}
+
+/* --- Composição dos mockups --- */
+.home-mockups {
+  position: relative;
+  width: min(420px, 100%);
+  aspect-ratio: 4 / 3.4;
+  pointer-events: none;
+}
+
+.bloco-decorativo {
+  position: absolute;
+  background: var(--cor-bloco);
+  border-radius: var(--raio-md);
+}
+
+.bloco-decorativo--1 {
+  width: 62%;
+  height: 58%;
+  top: 8%;
+  left: 4%;
+  transform: rotate(-6deg);
+}
+
+.bloco-decorativo--2 {
+  width: 52%;
+  height: 64%;
+  bottom: 4%;
+  right: 2%;
+  transform: rotate(8deg);
+}
+
+.mockup {
+  position: absolute;
+  width: 42%;
+  height: auto;
+  filter: drop-shadow(0 16px 24px var(--cor-sombra));
+}
+
+.mockup--esquerda {
+  left: 0;
+  top: 16%;
+  transform: rotate(-10deg);
+  z-index: var(--z-base);
+}
+
+.mockup--centro {
+  left: 50%;
+  top: 4%;
+  transform: translateX(-50%) rotate(2deg);
+  z-index: var(--z-elevado);
+}
+
+.mockup--direita {
+  right: 0;
+  top: 20%;
+  transform: rotate(10deg);
+  z-index: var(--z-base);
+}
+
+/* --- Texto e chat --- */
+.home-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  width: 100%;
+  max-width: var(--largura-chat);
+}
+
+.home-titulo {
+  font-size: var(--texto-titulo);
+  font-weight: var(--peso-forte);
+  line-height: 1.05;
+}
+
+.home-subtitulo {
+  font-size: var(--texto-subtitulo);
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto-suave);
+}
+
+/* Desktop: duas colunas com alinhamento vertical central.
+   Esquerda: título, subtítulo e chat. Direita: mockups */
+@media (min-width: 1024px) {
+  .pagina-home {
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    gap: var(--esp-xl);
+    min-height: 100vh;
+    padding-top: var(--altura-header);
+  }
+
+  .home-mockups {
+    flex: 1 1 50%;
+    max-width: 520px;
+  }
+
+  .home-conteudo {
+    flex: 1 1 50%;
+  }
+}
+
+/* ==========================================================
+   CHAT JESSY — componente único com 3 estados trocados por
+   classe (chat--expanded, chat--bar, chat--fab). A transição
+   entre estados é animada com GSAP FLIP em js/chat.js
+   ========================================================== */
+
+.chat {
+  border-radius: var(--raio-md);
+  z-index: var(--z-chat);
+}
+
+/* Linha superior: trilha das perguntas (caminho de pão) */
+.chat-trilha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+}
+
+.chat-trilha:empty {
+  display: none;
+}
+
+.chip {
+  font-family: var(--fonte-principal);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+  background: var(--cor-superficie-suave);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pill);
+  padding: var(--esp-xs) var(--esp-md);
+  cursor: pointer;
+  transition: border-color var(--duracao-xs) var(--ease-padrao),
+    background var(--duracao-xs) var(--ease-padrao);
+}
+
+.chip:hover {
+  border-color: var(--cor-destaque);
+  background: var(--cor-brilho-suave);
+}
+
+/* Chips da trilha ganham uma cor de marca para diferenciá-los
+   dos chips de sugestão */
+.chat-trilha .chip {
+  border-color: var(--cor-destaque);
+}
+
+/* Corpo: indicador "digitando" + resposta atual da Jessy */
+.chat-corpo {
+  min-height: 64px;
+}
+
+.chat-resposta {
+  font-size: var(--texto-base);
+  line-height: 1.5;
+  color: var(--cor-texto);
+}
+
+.chat-digitando {
+  display: flex;
+  gap: var(--esp-xs);
+  padding: var(--esp-sm) 0;
+}
+
+/* O display:flex acima venceria o atributo hidden do HTML,
+   então o estado escondido precisa ser reafirmado aqui */
+.chat-digitando[hidden] {
+  display: none;
+}
+
+.chat-digitando span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--raio-circulo);
+  background: var(--cor-marca-media);
+  animation: pulsar 1s var(--ease-fluido) infinite;
+}
+
+.chat-digitando span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chat-digitando span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes pulsar {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+/* Sugestões */
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-sm);
+}
+
+/* Formulário: campo de pergunta + enviar */
+.chat-form {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--fonte-principal);
+  font-size: var(--texto-base);
+  color: var(--cor-texto);
+  background: var(--cor-superficie-suave);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pill);
+  padding: var(--esp-sm) var(--esp-md);
+  outline: none;
+}
+
+.chat-form input::placeholder {
+  color: var(--cor-texto-suave);
+}
+
+.chat-form input:focus {
+  border-color: var(--cor-destaque);
+}
+
+.chat-enviar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-circulo);
+  background: var(--cor-superficie-suave);
+  color: var(--cor-texto);
+  cursor: pointer;
+  transition: border-color var(--duracao-xs) var(--ease-padrao);
+}
+
+.chat-enviar:hover {
+  border-color: var(--cor-destaque);
+}
+
+.chat-enviar svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Botão de minimizar (expanded/bar) e ícone do fab */
+.chat-minimizar {
+  position: absolute;
+  top: var(--esp-sm);
+  right: var(--esp-sm);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--raio-circulo);
+  background: var(--cor-superficie-suave);
+  color: var(--cor-texto-suave);
+  font-size: var(--texto-base);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-minimizar:hover {
+  color: var(--cor-texto);
+}
+
+.chat-fab-icone {
+  display: none;
+  border: none;
+  background: var(--cor-transparente);
+  color: var(--cor-marca-media);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.chat-fab-icone svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+/* ----- Estado 1: expandido (padrão da home) ----- */
+.chat--expanded {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-md);
+  width: 100%;
+  padding: var(--esp-lg) var(--esp-md) var(--esp-md);
+}
+
+/* ----- Estado 2: barra fixa na base da tela ----- */
+.chat--bar {
+  position: fixed;
+  left: var(--esp-md);
+  right: var(--esp-md);
+  bottom: var(--esp-md);
+  margin-inline: auto;
+  max-width: var(--largura-chat-bar);
+  display: flex;
+  align-items: center;
+  gap: var(--esp-sm);
+  padding: var(--esp-sm) var(--esp-md);
+  border-radius: var(--raio-pill);
+}
+
+/* Na barra, a trilha fica compacta: uma linha com scroll horizontal */
+.chat--bar .chat-trilha {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 40%;
+  scrollbar-width: none;
+}
+
+.chat--bar .chat-trilha .chip {
+  font-size: var(--texto-xs);
+  padding: var(--esp-xs) var(--esp-sm);
+  white-space: nowrap;
+}
+
+/* A resposta aparece como um painel flutuante acima da barra */
+.chat--bar .chat-corpo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--esp-sm));
+  min-height: 0;
+  padding: var(--esp-md);
+  border-radius: var(--raio-md);
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+}
+
+.chat--bar .chat-corpo:has(.chat-resposta:empty) {
+  display: none;
+}
+
+.chat--bar .chat-chips,
+.chat--bar .chat-minimizar {
+  display: none;
+}
+
+.chat--bar .chat-form {
+  flex: 1;
+}
+
+/* ----- Estado 3: botão flutuante (modo leitura) ----- */
+.chat--fab {
+  position: fixed;
+  right: var(--esp-md);
+  bottom: var(--esp-md);
+  width: var(--tamanho-fab);
+  height: var(--tamanho-fab);
+  border-radius: var(--raio-circulo);
+  padding: 0;
+  cursor: pointer;
+}
+
+.chat--fab .chat-fab-icone {
+  display: inline-flex;
+}
+
+/* No fab, todo o resto (trilha inclusive) só aparece ao expandir */
+.chat--fab .chat-trilha,
+.chat--fab .chat-corpo,
+.chat--fab .chat-chips,
+.chat--fab .chat-form,
+.chat--fab .chat-minimizar {
+  display: none;
+}

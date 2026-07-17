@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{size_download}\\\\n\" http://127.0.0.1:8642/index.html http://127.0.0.1:8642/css/style.css http://127.0.0.1:8642/js/grid.js)",
+      "Bash(curl -sv http://127.0.0.1:8642/index.html)",
+      "Bash(kill 98716)",
+      "Bash(python3 -m http.server 8642 --bind 127.0.0.1)"
+    ]
+  }
+}
