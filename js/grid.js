@@ -32,9 +32,25 @@
   var REST_EPSILON = 0.05;        // limiar para considerar um ponto em repouso
 
   // ---------------------------------------------------------
+  // Sinal de "grade pronta": o preloader espera este sinal para
+  // liberar a saída do splash. A flag em window cobre o caso de
+  // o listener ser registrado depois do disparo do evento.
+  // ---------------------------------------------------------
+  function sinalizarGradePronta() {
+    if (window.__gradePronta) return;
+    window.__gradePronta = true;
+    window.dispatchEvent(new Event('grade:pronta'));
+  }
+
+  // ---------------------------------------------------------
   // Estado do canvas
   // ---------------------------------------------------------
   var canvas = document.getElementById('grid-canvas');
+  if (!canvas) {
+    console.error('Grade: o seletor "#grid-canvas" não encontrou nenhum elemento no HTML. Malha desativada.');
+    sinalizarGradePronta(); // não prende o preloader se a malha falhar
+    return;
+  }
   var ctx = canvas.getContext('2d');
 
 
@@ -384,6 +400,7 @@
     var moving = updatePoints();
     draw();
     needsRender = false;
+    sinalizarGradePronta(); // primeiro desenho concluído
 
     // Continua o loop só se algo ainda se move ou se o usuário
     // segue pressionando (o cursor pode mudar de célula)

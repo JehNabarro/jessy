@@ -311,7 +311,7 @@ body.drawer-aberto .botao-menu span:nth-child(3) {
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(320px, 80vw);
+  width: min(220px, 80vw);
   z-index: var(--z-drawer);
   border-radius: var(--raio-md) 0 0 var(--raio-md);
   padding: calc(var(--altura-header) + var(--esp-lg)) var(--esp-lg) var(--esp-lg);
@@ -373,7 +373,7 @@ main {
 .home-mockups {
   position: relative;
   width: min(420px, 100%);
-  aspect-ratio: 4 / 3.4;
+  aspect-ratio: 4.5 / 5;
   pointer-events: none;
 }
 
@@ -401,29 +401,31 @@ main {
 
 .mockup {
   position: absolute;
-  width: 42%;
+  width: 70%;
+  max-width: 310px;
   height: auto;
   filter: drop-shadow(0 16px 24px var(--cor-sombra));
 }
 
 .mockup--esquerda {
-  left: 0;
-  top: 16%;
-  transform: rotate(-10deg);
+  left: -80px;
+  top: 0;
+  /* transform: rotate(-10deg);*/
   z-index: var(--z-base);
 }
 
 .mockup--centro {
   left: 50%;
-  top: 4%;
-  transform: translateX(-50%) rotate(2deg);
+  top: 0;
+  transform: translateX(-50%);
+  /* rotate(2deg); */
   z-index: var(--z-elevado);
 }
 
 .mockup--direita {
-  right: 0;
-  top: 20%;
-  transform: rotate(10deg);
+  right: -50px;
+  top: 0;
+  /* transform: rotate(10deg); */
   z-index: var(--z-base);
 }
 
@@ -453,7 +455,7 @@ main {
 @media (min-width: 1024px) {
   .pagina-home {
     flex-direction: row-reverse;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: var(--esp-xl);
     min-height: 100vh;

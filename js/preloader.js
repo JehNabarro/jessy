@@ -34,15 +34,19 @@
     if (!texto) faltando.push('#preloader .texto-circular text');
     if (!wrapper) faltando.push('#preloader .circulo-wrapper');
 
-    // Remove o splash quando a página terminar de carregar
-    // (usado nos caminhos sem animação)
+    // Remove o splash quando a página terminar de carregar E a
+    // grade de fundo já tiver feito o primeiro desenho — o site
+    // nunca abre sem a grade pronta (usado nos caminhos sem animação)
     function removerAoCarregar() {
-        const remover = () => {
+        const tentar = () => {
+            if (document.readyState !== 'complete') return;
+            if (!window.__gradePronta) return;
             preloader.remove();
             document.body.classList.add('loaded');
         };
-        if (document.readyState === 'complete') remover();
-        else window.addEventListener('load', remover);
+        window.addEventListener('load', tentar);
+        window.addEventListener('grade:pronta', tentar);
+        tentar();
     }
 
     if (faltando.length > 0) {
@@ -80,15 +84,24 @@
     let sequenciaPronta = false;
     let paginaCarregada = false;
     let tempoMinimoOk = false;
+    let gradePronta = window.__gradePronta === true;
 
     window.addEventListener('load', () => {
         paginaCarregada = true;
         tentarSair();
     });
 
+    // A grade de fundo (js/grid.js) dispara este evento após o
+    // primeiro desenho no canvas
+    window.addEventListener('grade:pronta', () => {
+        gradePronta = true;
+        tentarSair();
+    });
+
     function tentarSair() {
-        // Só sai quando: sequência terminou + página carregou + tempo mínimo passou
-        if (!sequenciaPronta || !paginaCarregada || !tempoMinimoOk) return;
+        // Só sai quando: sequência terminou + página carregou +
+        // tempo mínimo passou + grade desenhada
+        if (!sequenciaPronta || !paginaCarregada || !tempoMinimoOk || !gradePronta) return;
         sair();
     }
 
