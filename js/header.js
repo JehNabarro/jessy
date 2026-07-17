@@ -16,7 +16,7 @@ let header = null;
 let containerAtual = window; // alvo de scroll ativo (window ou overlay)
 let ultimoY = 0;             // posição de scroll do frame anterior
 let aguardandoFrame = false; // throttle: só um requestAnimationFrame por vez
-
+let ignorarProximoScroll = false; // 1º evento após trocar o alvo pode ser restauração do navegador
 // Lê a posição de scroll do container ativo (window usa scrollY,
 // elementos usam scrollTop)
 function lerScroll() {
@@ -32,6 +32,12 @@ function aoRolar() {
 
 function atualizarHeader() {
     aguardandoFrame = false;
+
+    if (ignorarProximoScroll) {
+        ignorarProximoScroll = false;
+        ultimoY = lerScroll();
+        return;
+    }
 
     // Drawer aberto: header sempre visível
     if (document.body.classList.contains('drawer-aberto')) {
@@ -67,6 +73,7 @@ export function observarScroll(container) {
     containerAtual = container || window;
     containerAtual.addEventListener('scroll', aoRolar, { passive: true });
     ultimoY = lerScroll();
+    ignorarProximoScroll = true;
     header.classList.remove('header--oculto');
 }
 

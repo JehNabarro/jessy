@@ -316,13 +316,18 @@ body.drawer-aberto .botao-menu span:nth-child(3) {
   border-radius: var(--raio-md) 0 0 var(--raio-md);
   padding: calc(var(--altura-header) + var(--esp-lg)) var(--esp-lg) var(--esp-lg);
   transform: translateX(100%);
-  transition: transform var(--duracao-md) var(--ease-fluido);
+  transition:
+    transform var(--duracao-md) var(--ease-fluido),
+    visibility 0s linear var(--duracao-md);
   visibility: hidden;
 }
 
 body.drawer-aberto .drawer-menu {
   transform: translateX(0);
   visibility: visible;
+  transition:
+    transform var(--duracao-md) var(--ease-fluido),
+    visibility 0s;
 }
 
 .drawer-menu ul {
