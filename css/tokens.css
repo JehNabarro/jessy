@@ -5,167 +5,170 @@
    ========================================================== */
 
 :root {
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Nível 1 — Paleta bruta
      Todas as cores que existiam espalhadas em style.css,
      no SVG inline do index.html e no JS (grid.js/preloader.js).
      Nenhum seletor deve usar estes tokens diretamente:
      use sempre o nível semântico abaixo.
      ---------------------------------------------------------- */
-  --branco: #FFFFFF;
-  --preto: #000000;
-  --cinza-900: #22202B;
-  /* fundo geral (antes duplicado em style.css e grid.js) */
-  --cinza-700-alpha-72: #43414BB7;
-  /* sombra interna do vidro */
+   --branco: #FFFFFF;
+   --preto: #000000;
+   --cinza-900: #22202B;
+   /* fundo geral (antes duplicado em style.css e grid.js) */
+   --cinza-700-alpha-72: #43414BB7;
+   /* sombra interna do vidro */
 
-  --roxo-500: #B65EDB;
-  /* marca: contorno e preenchimento principal */
-  --roxo-400: #B85AF3;
-  /* marca: detalhes vivos */
-  --lilas-300: #C996F2;
-  /* marca: tom médio */
-  --lilas-100: #F3DDF9;
-  /* marca: tom claro */
+   --roxo-500: #B65EDB;
+   /* marca: contorno e preenchimento principal */
+   --roxo-400: #B85AF3;
+   /* marca: detalhes vivos */
+   --lilas-300: #C996F2;
+   /* marca: tom médio */
+   --lilas-100: #F3DDF9;
+   /* marca: tom claro */
 
-  --cinza-800: #2E2B3A;
-  /* blocos decorativos atrás dos mockups */
+   --cinza-800: #2E2B3A;
+   /* blocos decorativos atrás dos mockups */
 
-  --branco-alpha-60: rgba(255, 255, 255, 0.6);
-  --branco-alpha-30: rgba(255, 255, 255, 0.3);
-  --branco-alpha-20: rgba(255, 255, 255, 0.2);
-  --branco-alpha-06: rgba(255, 255, 255, 0.06);
-  --branco-alpha-05: rgba(255, 255, 255, 0.05);
-  --preto-alpha-35: rgba(0, 0, 0, 0.35);
-  --sem-cor: transparent;
+   --branco-alpha-60: rgba(255, 255, 255, 0.6);
+   --branco-alpha-30: rgba(255, 255, 255, 0.3);
+   --branco-alpha-20: rgba(255, 255, 255, 0.2);
+   --branco-alpha-06: rgba(255, 255, 255, 0.06);
+   --branco-alpha-05: rgba(255, 255, 255, 0.05);
+   --preto-alpha-35: rgba(0, 0, 0, 0.35);
+   --sem-cor: transparent;
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Nível 2 — Tokens semânticos (apontam para o nível 1)
      ---------------------------------------------------------- */
-  --cor-fundo: var(--cinza-900);
-  --cor-superficie: var(--branco-alpha-05);
-  /* “vidro” do preloader */
-  --cor-texto: var(--branco);
-  --cor-texto-suave: var(--branco-alpha-60);
-  /* texto orbital do preloader */
-  --cor-destaque: var(--roxo-500);
-  /* neon da marca */
-  --cor-destaque-vivida: var(--roxo-400);
-  --cor-marca-media: var(--lilas-300);
-  --cor-marca-clara: var(--lilas-100);
-  --cor-borda: var(--branco-alpha-20);
-  --cor-linha-grade: var(--branco-alpha-20);
-  /* mesma base da borda: valor era duplicado */
-  --cor-brilho: var(--branco-alpha-30);
-  /* highlight interno do vidro */
-  --cor-brilho-suave: var(--branco-alpha-06);
-  /* reflexo do ::after do vidro */
-  --cor-sombra: var(--preto-alpha-35);
-  --cor-sombra-interna: var(--cinza-700-alpha-72);
-  --cor-transparente: var(--sem-cor);
-  --cor-bloco: var(--cinza-800);
-  /* blocos cinza decorativos da home */
-  --cor-superficie-suave: var(--branco-alpha-06);
-  /* chips, trilha do chat */
+   --cor-fundo: var(--cinza-900);
+   --cor-superficie: var(--branco-alpha-05);
+   /* “vidro” do preloader */
+   --cor-texto: var(--branco);
+   --cor-texto-suave: var(--branco-alpha-60);
+   /* texto orbital do preloader */
+   --cor-destaque: var(--roxo-500);
+   /* neon da marca */
+   --cor-destaque-vivida: var(--roxo-400);
+   --cor-marca-media: var(--lilas-300);
+   --cor-marca-clara: var(--lilas-100);
+   --cor-borda: var(--branco-alpha-20);
+   --cor-linha-grade: var(--branco-alpha-20);
+   /* mesma base da borda: valor era duplicado */
+   --cor-brilho: var(--branco-alpha-30);
+   /* highlight interno do vidro */
+   --cor-brilho-suave: var(--branco-alpha-06);
+   /* reflexo do ::after do vidro */
+   --cor-sombra: var(--preto-alpha-35);
+   --cor-sombra-interna: var(--cinza-700-alpha-72);
+   --cor-transparente: var(--sem-cor);
+   --cor-bloco: var(--cinza-800);
+   /* blocos cinza decorativos da home */
+   --cor-superficie-suave: var(--branco-alpha-06);
+   /* chips, trilha do chat */
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Tipografia
      Glory (Google Fonts) é a fonte de toda a aplicação.
      Nenhum componente declara font-family diretamente:
      todos usam --fonte-principal.
      ---------------------------------------------------------- */
-  --fonte-principal: 'Glory', sans-serif;
-  --fonte-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* fallback legado */
+   --fonte-principal: 'Glory', sans-serif;
+   --fonte-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+   /* fallback legado */
 
-  --peso-regular: 400;
-  --peso-medio: 600;
-  --peso-forte: 800;
+   --peso-regular: 400;
+   --peso-medio: 600;
+   --peso-forte: 800;
 
-  --texto-xs: 12px;
-  /* chips compactos da trilha */
-  --texto-sm: 14px;
-  /* texto orbital, chips */
-  --texto-base: 16px;
-  --texto-lg: 24px;
-  --texto-titulo: clamp(32px, min(7vw, 8dvh), 64px);
-  --texto-subtitulo: clamp(14px, min(2.5vw, 3dvh), 22px);
-  --espaco-letras-orbital: 3.3px;
+   --texto-xs: 12px;
+   /* chips compactos da trilha */
+   --texto-sm: 14px;
+   /* texto orbital, chips */
+   --texto-base: 16px;
+   --texto-lg: 24px;
+   --texto-titulo: clamp(30px, min(8.5vw, 8dvh), 72px);
+   --texto-subtitulo: clamp(14px, min(3vw, 3dvh), 22px);
+   --espaco-letras-orbital: 3.3px;
+   --esp-fluido: clamp(8px, 2dvh, 30px);
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Espaçamento
      ---------------------------------------------------------- */
-  --esp-xs: 4px;
-  --esp-sm: 8px;
-  --esp-md: 16px;
-  /* respiro do vidro dentro do wrapper */
-  --esp-lg: 30px;
-  /* órbita do texto e deslocamento de entrada da home */
-  --esp-xl: 64px;
+   --esp-xs: 4px;
+   --esp-sm: 8px;
+   --esp-md: 16px;
+   /* respiro do vidro dentro do wrapper */
+   --esp-lg: 30px;
+   /* órbita do texto e deslocamento de entrada da home */
+   --esp-xl: 64px;
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Raios de borda
      ---------------------------------------------------------- */
-  --raio-sm: 12px;
-  --raio-md: 18px;
-  --raio-pill: 999px;
-  /* chips, barra do chat */
-  --raio-circulo: 50%;
+   --raio-sm: 12px;
+   --raio-md: 18px;
+   --raio-pill: 999px;
+   /* chips, barra do chat */
+   --raio-circulo: 50%;
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Layout
      ---------------------------------------------------------- */
-  --altura-header: 76px;
-  --largura-chat: 480px;
-  /* chat expandido */
-  --largura-chat-bar: 680px;
-  /* chat em barra na base */
-  --tamanho-fab: 60px;
-  /* chat em botão flutuante */
+   --altura-header: 76px;
+   --largura-conteudo: 1200px;
+   --respiro-lateral: var(--esp-md);
+   --largura-chat: 480px;
+   /* chat expandido */
+   --largura-chat-bar: 680px;
+   /* chat em barra na base */
+   --tamanho-fab: 60px;
+   /* chat em botão flutuante */
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Movimento — durações e easings
      (o preloader.js lê estes tokens via getComputedStyle)
      ---------------------------------------------------------- */
-  --duracao-xs: 450ms;
-  /* zoom-out do wrapper na saída */
-  --duracao-sm: 500ms;
-  /* preenchimento das letras */
-  --duracao-md: 600ms;
-  /* fade da marca */
-  --duracao-lg: 800ms;
-  /* cortina de saída e entrada da home */
-  --duracao-xl: 900ms;
-  /* bounce do vidro */
-  --duracao-escrita: 1400ms;
-  /* “escrita” do texto orbital */
-  --duracao-giro: 40s;
-  /* rotação contínua do texto orbital */
-  --tempo-minimo-preloader: 2800ms;
+   --duracao-xs: 450ms;
+   /* zoom-out do wrapper na saída */
+   --duracao-sm: 500ms;
+   /* preenchimento das letras */
+   --duracao-md: 600ms;
+   /* fade da marca */
+   --duracao-lg: 800ms;
+   /* cortina de saída e entrada da home */
+   --duracao-xl: 900ms;
+   /* bounce do vidro */
+   --duracao-escrita: 1400ms;
+   /* “escrita” do texto orbital */
+   --duracao-giro: 40s;
+   /* rotação contínua do texto orbital */
+   --tempo-minimo-preloader: 2800ms;
 
-  --ease-padrao: ease;
-  --ease-entrada: ease-out;
-  --ease-saida: ease-in;
-  --ease-fluido: ease-in-out;
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* overshoot do vidro */
-  --ease-cortina: cubic-bezier(0.76, 0, 0.24, 1);
-  /* subida do preloader */
+   --ease-padrao: ease;
+   --ease-entrada: ease-out;
+   --ease-saida: ease-in;
+   --ease-fluido: ease-in-out;
+   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+   /* overshoot do vidro */
+   --ease-cortina: cubic-bezier(0.76, 0, 0.24, 1);
+   /* subida do preloader */
 
-  /* ----------------------------------------------------------
+   /* ----------------------------------------------------------
      Z-index
      ---------------------------------------------------------- */
-  --z-fundo: -1;
-  /* canvas da grade */
-  --z-base: 1;
-  /* vidro */
-  --z-elevado: 2;
-  /* variação .quadrado */
-  --z-chat: 90;
-  /* chat flutuante (bar/fab) */
-  --z-header: 100;
-  /* header fixo */
-  --z-drawer: 200;
-  /* menu lateral acima do header */
-  --z-preloader: 9999;
+   --z-fundo: -1;
+   /* canvas da grade */
+   --z-base: 1;
+   /* vidro */
+   --z-elevado: 2;
+   /* variação .quadrado */
+   --z-chat: 90;
+   /* chat flutuante (bar/fab) */
+   --z-header: 100;
+   /* header fixo */
+   --z-drawer: 200;
+   /* menu lateral acima do header */
+   --z-preloader: 9999;
 }

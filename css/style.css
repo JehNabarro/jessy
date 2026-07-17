@@ -213,13 +213,13 @@ header {
   /* Mesmo contêiner do conteúdo da home (max-width centrado e o
      mesmo respiro lateral): assim a marca alinha com o texto em
      qualquer largura de tela */
-  max-width: 1200px;
+  max-width: var(--largura-conteudo);
+  padding: 0 var(--respiro-lateral);
   margin-inline: auto;
   height: var(--altura-header);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--esp-md);
   z-index: var(--z-header);
   /* O auto-hide é 100% CSS: o JS só troca a classe */
   transition:
@@ -373,19 +373,20 @@ body:has(.pagina-home) {
   align-items: center;
   justify-content: center;
   gap: var(--esp-md);
-  max-width: 1200px;
+  max-width: var(--largura-conteudo);
   margin: 0 auto;
   height: 100dvh;
   overflow: hidden;
-  padding: calc(var(--altura-header) + var(--esp-md)) var(--esp-md) var(--esp-md);
+  padding: calc(var(--altura-header) + var(--esp-md)) var(--respiro-lateral) var(--esp-md);
 }
 
-/* --- Composição dos mockups --- */
+/* --- Composição dos mockups ---
+   Tudo em % relativo ao contêiner: a composição escala como
+   uma imagem única, sem medidas fixas que vazam no mobile */
 .home-mockups {
   position: relative;
-  width: min(420px, 100%, 45dvh);
-  max-width: 310px;
-  aspect-ratio: 4.5 / 5;
+  width: min(100%, 46dvh, 480px);
+  aspect-ratio: 1 / 1;
   flex-shrink: 1;
   min-height: 0;
   pointer-events: none;
@@ -415,16 +416,14 @@ body:has(.pagina-home) {
 
 .mockup {
   position: absolute;
-  width: 70%;
-  max-width: 310px;
+  width: 58%;
   height: auto;
   filter: drop-shadow(0 16px 24px var(--cor-sombra));
 }
 
 .mockup--esquerda {
-  left: -80px;
-  top: 0;
-  /* transform: rotate(-10deg);*/
+  left: -6%;
+  top: 4%;
   z-index: var(--z-base);
 }
 
@@ -432,14 +431,12 @@ body:has(.pagina-home) {
   left: 50%;
   top: 0;
   transform: translateX(-50%);
-  /* rotate(2deg); */
   z-index: var(--z-elevado);
 }
 
 .mockup--direita {
-  right: -50px;
-  top: 0;
-  /* transform: rotate(10deg); */
+  right: -6%;
+  top: 4%;
   z-index: var(--z-base);
 }
 
@@ -447,9 +444,10 @@ body:has(.pagina-home) {
 .home-conteudo {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-md);
+  gap: clamp(var(--esp-sm), 2dvh, var(--esp-md));
   width: 100%;
   max-width: var(--largura-chat);
+  min-height: 0;
 }
 
 .home-titulo {
@@ -464,26 +462,27 @@ body:has(.pagina-home) {
   color: var(--cor-texto-suave);
 }
 
-/* Desktop: duas colunas com alinhamento vertical central.
-   Esquerda: título, subtítulo e chat. Direita: mockups */
+/* Desktop: só muda a DIREÇÃO do layout. Os tamanhos continuam
+   fluidos, então qualquer largura entre 1024 e 4k se acomoda */
 @media (min-width: 1024px) {
   .pagina-home {
     flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
-    gap: var(--esp-xl);
+    /*gap: clamp(var(--esp-lg), 6vw, 120px);*/
     min-height: 0;
+    overflow: visible;
     height: 100dvh;
     padding-top: var(--altura-header);
   }
 
   .home-mockups {
-    flex: 1 1 50%;
-    max-width: 520px;
+    flex: 0 1 auto;
+    width: min(42vw, 80dvh, 560px);
   }
 
   .home-conteudo {
-    flex: 1 1 50%;
+    flex: 0 1 var(--largura-chat);
   }
 }
 
