@@ -359,26 +359,35 @@ body.drawer-aberto header {
    ========================================================== */
 
 main {
-  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body:has(.pagina-home) {
+  overflow: hidden;
+  height: 100dvh;
 }
 
 .pagina-home {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--esp-lg);
+  justify-content: center;
+  gap: var(--esp-md);
   max-width: 1200px;
   margin: 0 auto;
-  /* O respiro do topo soma o deslocamento do header (--esp-xl)
-     para o conteúdo não começar embaixo dele */
-  padding: calc(var(--altura-header) + var(--esp-xl) + var(--esp-md)) var(--esp-md) var(--esp-xl);
+  height: 100dvh;
+  overflow: hidden;
+  padding: calc(var(--altura-header) + var(--esp-md)) var(--esp-md) var(--esp-md);
 }
 
 /* --- Composição dos mockups --- */
 .home-mockups {
   position: relative;
-  width: min(420px, 100%);
+  width: min(420px, 100%, 45dvh);
+  max-width: 310px;
   aspect-ratio: 4.5 / 5;
+  flex-shrink: 1;
+  min-height: 0;
   pointer-events: none;
 }
 
@@ -463,7 +472,8 @@ main {
     justify-content: space-between;
     align-items: center;
     gap: var(--esp-xl);
-    min-height: 100vh;
+    min-height: 0;
+    height: 100dvh;
     padding-top: var(--altura-header);
   }
 
