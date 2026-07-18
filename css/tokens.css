@@ -91,28 +91,27 @@
    --espaco-letras-orbital: 3.3px;
 
    /* ----------------------------------------------------------
-     Espaçamento — escala fluida com clamp():
-     o máximo é o valor histórico (4/8/16/30/64px), atingido a
-     partir de ~390px de largura; abaixo disso encolhe suave
+     Camada 1 — Escala de espaçamento (fixa)
+     Valores imutáveis em qualquer tela: nenhum @media redefine.
+     Seletores nunca usam a escala direto — só a camada de
+     aplicação, no fim deste arquivo.
+     (o router.js lê --esp-lg via getComputedStyle)
      ---------------------------------------------------------- */
-   --esp-xs: clamp(3px, 1vw, 4px);
-   --esp-sm: clamp(6px, 2vw, 8px);
-   --esp-md: clamp(12px, 4.1vw, 16px);
-   /* respiro do vidro dentro do wrapper */
-   --esp-lg: clamp(20px, 7.7vw, 30px);
-   /* órbita do texto e deslocamento de entrada da home
-      (o router.js lê --esp-lg via getComputedStyle) */
-   --esp-xl: clamp(40px, 16.4vw, 64px);
+   --esp-xs: 4px;
+   --esp-sm: 12px;
+   --esp-md: 24px;
+   --esp-lg: 42px;
+   --esp-xl: 64px;
 
    /* ----------------------------------------------------------
-     Gap — mesma escala do espaçamento; o md também cede em
-     altura (2dvh) para telas baixas, como o conteúdo da home
+     Camada 1 — Escala de altura (fixa)
+     Mesma regra: imutável, sem @media
      ---------------------------------------------------------- */
-   --gap-xs: var(--esp-xs);
-   --gap-sm: var(--esp-sm);
-   --gap-md: clamp(var(--esp-sm), 2dvh, var(--esp-md));
-   --gap-lg: var(--esp-lg);
-   --gap-xl: var(--esp-xl);
+   --alt-xs: 40px;
+   --alt-sm: 48px;
+   --alt-md: 56px;
+   --alt-lg: 64px;
+   --alt-xl: 76px;
 
    /* ----------------------------------------------------------
      Raios de borda
@@ -121,29 +120,6 @@
    --raio-pill: 999px;
    /* chips, barra do chat */
    --raio-circulo: 50%;
-
-   /* ----------------------------------------------------------
-     Layout
-     ---------------------------------------------------------- */
-   --altura-header: 76px;
-   --respiro-lateral: var(--esp-lg);
-   --tamanho-fab: 60px;
-   /* chat em botão flutuante */
-
-   /* ----------------------------------------------------------
-     Largura — escala mobile-first; só o md muda no desktop
-     (breakpoint de 1024px, o mesmo de direção do style.css)
-     ---------------------------------------------------------- */
-   --largura-xs: min(220px, 80vw);
-   /* drawer do menu */
-   --largura-sm: 480px;
-   /* chat expandido / coluna de texto da home */
-   --largura-md: min(100%, 46dvh, 480px);
-   /* composição dos mockups */
-   --largura-lg: 680px;
-   /* chat em barra na base */
-   --largura-xl: 1200px;
-   /* contêiner de conteúdo */
 
    /* ----------------------------------------------------------
      Movimento — durações e easings
@@ -192,10 +168,133 @@
    --z-preloader: 9999;
 }
 
-/* Desktop: os mockups passam a escalar pela viewport,
-   não pelo contêiner */
+/* ==========================================================
+   Camada 2 — Aplicação
+   Tokens semânticos por uso: cada um aponta para um degrau
+   das escalas fixas acima. Os @media abaixo só trocam o
+   degrau, nunca inventam px novo. Exceção: largura de
+   componente pode usar px/min() direto, pois largura não
+   pertence à escala de espaçamento.
+   ========================================================== */
+
+/* ============ BASE: mobile pequeno (até 479px) ============ */
+:root {
+   /* Espaçamento e gap */
+   --padding-pagina: var(--esp-sm);
+   /* respiro lateral: header, home e páginas de conteúdo */
+   --padding-home-vert: var(--esp-sm);
+   /* respiro vertical da home (abaixo do header e na base) */
+   --padding-chat: var(--esp-sm);
+   /* lados e base do chat expandido */
+   --padding-chat-topo: var(--esp-lg);
+   /* topo do chat expandido (abre espaço p/ botão minimizar) */
+   --padding-barra: var(--esp-sm) var(--esp-md);
+   /* interno do chat em barra */
+   --padding-corpo-chat: var(--esp-md);
+   /* painel de resposta flutuante do chat em barra */
+   --padding-drawer: var(--esp-md);
+   /* respiro interno do menu lateral */
+   --padding-chip: var(--esp-xs) var(--esp-md);
+   /* chips de sugestão e trilha */
+   --padding-chip-compacto: var(--esp-xs) var(--esp-sm);
+   /* chips da trilha no chat em barra */
+   --padding-campo: var(--esp-sm) var(--esp-md);
+   /* campo de pergunta do chat */
+   --padding-conteudo-topo: var(--esp-md);
+   /* respiro entre o header e o h1 das páginas de conteúdo */
+   --respiro-conteudo-base: calc(var(--esp-xl) + var(--esp-xl));
+   /* base das páginas de conteúdo (conteúdo não fica sob o chat) */
+   --gap-home: var(--esp-sm);
+   /* coluna da home e coluna de texto */
+   --gap-chat: var(--esp-sm);
+   /* blocos internos do chat expandido */
+   --gap-trilha: var(--esp-sm);
+   /* trilha, chips, formulário e barra do chat */
+   --gap-digitando: var(--esp-xs);
+   /* dots do indicador "digitando" */
+   --gap-drawer: var(--esp-md);
+   /* itens do menu lateral */
+   --margem-barra: var(--esp-md);
+   /* afastamento do chat barra/fab das bordas da tela */
+   --margem-minimizar: var(--esp-sm);
+   /* botão minimizar dentro do chat */
+   --respiro-vidro: var(--esp-md);
+   /* vidro dentro do wrapper do preloader */
+   --orbita-preloader: var(--esp-lg);
+   /* texto orbital por fora do vidro */
+   --deslocamento-entrada: var(--esp-lg);
+   /* entrada da home (mesmo valor que o router.js lê em --esp-lg) */
+
+   /* Alturas */
+   --altura-header: var(--alt-md);
+   /* header e logo (também no padding-top da home/drawer) */
+   --topo-header: var(--esp-sm);
+   /* distância do header ao topo da tela */
+   --altura-corpo-chat: var(--alt-xs);
+   /* reserva mínima do corpo de resposta do chat */
+   --altura-fab: var(--alt-sm);
+   /* chat em botão flutuante */
+   --tamanho-botao-menu: var(--alt-sm);
+   /* hambúrguer circular do header */
+   --tamanho-enviar: var(--alt-xs);
+   /* botão enviar do chat */
+
+   /* Larguras (exceção: px/min() direto permitido) */
+   --largura-mockups: min(100%, 40dvh, 420px);
+   /* composição dos mockups da home */
+   --largura-chat: 100%;
+   /* chat expandido / coluna de texto da home */
+   --largura-chat-bar: 680px;
+   /* chat em barra na base */
+   --largura-conteudo: 100%;
+   /* contêiner das páginas de conteúdo */
+   --largura-drawer: min(220px, 80vw);
+   /* menu lateral */
+   --tamanho-preloader: 250px;
+   /* círculo de vidro da tela splash */
+}
+
+/* ============ SM: 480px+ ============ */
+@media (min-width: 480px) {
+   :root {
+      --padding-pagina: var(--esp-md);
+      --largura-mockups: min(100%, 44dvh, 480px);
+   }
+}
+
+/* ============ MD: 768px+ ============ */
+@media (min-width: 768px) {
+   :root {
+      --altura-header: var(--alt-lg);
+      --topo-header: var(--esp-md);
+      --padding-home-vert: var(--esp-md);
+      --largura-mockups: min(100%, 46dvh, 480px);
+   }
+}
+
+/* ============ LG: 1024px+ (visual desktop atual) ============ */
 @media (min-width: 1024px) {
    :root {
-      --largura-md: min(42vw, 80dvh, 560px);
+      --padding-pagina: var(--esp-lg);
+      --padding-chat: var(--esp-md);
+      --padding-drawer: var(--esp-lg);
+      --padding-conteudo-topo: var(--esp-lg);
+      --gap-home: var(--esp-md);
+      --gap-chat: var(--esp-md);
+      --altura-header: var(--alt-xl);
+      --topo-header: var(--esp-xl);
+      --altura-corpo-chat: var(--alt-lg);
+      --altura-fab: 60px;
+      --largura-chat: 480px;
+      --largura-mockups: min(42vw, 80dvh, 560px);
+      --largura-conteudo: 1200px;
+   }
+}
+
+/* ============ XL: 1440px+ ============ */
+@media (min-width: 1440px) {
+   :root {
+      --largura-conteudo: 1350px;
+      --largura-chat: 560px;
    }
 }

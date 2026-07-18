@@ -48,7 +48,7 @@ body.interagindo {
    já que o id "home" pertence ao <template> */
 html.js .pagina-home {
   opacity: 0;
-  transform: translateY(var(--esp-lg));
+  transform: translateY(var(--deslocamento-entrada));
   transition:
     opacity var(--duracao-lg) var(--ease-padrao),
     transform var(--duracao-lg) var(--ease-padrao);
@@ -81,14 +81,14 @@ html.js body.loaded .pagina-home {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 250px;
-  height: 250px;
+  width: var(--tamanho-preloader);
+  height: var(--tamanho-preloader);
   transform: translate(-50%, -50%);
 }
 
 .texto-circular {
   position: absolute;
-  inset: calc(var(--esp-lg) * -1);
+  inset: calc(var(--orbita-preloader) * -1);
   /* maior que o glass, texto orbita por fora */
   width: auto;
   /* deixa o inset mandar */
@@ -163,7 +163,7 @@ html.js body.loaded .pagina-home {
    que antes estava direto em .glass */
 .circulo-wrapper .glass {
   position: absolute;
-  inset: var(--esp-md);
+  inset: var(--respiro-vidro);
   border-radius: var(--raio-circulo);
 }
 
@@ -192,13 +192,14 @@ html.js body.loaded .pagina-home {
 
 header {
   position: fixed;
-  top: var(--esp-xl);
+  top: var(--topo-header);
   left: 0;
   right: 0;
+  max-width: var(--largura-conteudo);
   /* Mesmo contêiner do conteúdo da home (max-width centrado e o
      mesmo respiro lateral): assim a marca alinha com o texto em
      qualquer largura de tela */
-  padding: 0 var(--respiro-lateral);
+  padding: 0 var(--padding-pagina);
   margin-inline: auto;
   height: var(--altura-header);
   display: flex;
@@ -212,9 +213,9 @@ header {
 }
 
 /* O -100% sozinho não bastaria: o header parte deslocado
-   var(--esp-xl) do topo, então o deslocamento extra entra na conta */
+   var(--topo-header) do topo, então o deslocamento extra entra na conta */
 header.header--oculto {
-  transform: translateY(calc(-100% - var(--esp-xl)));
+  transform: translateY(calc(-100% - var(--topo-header)));
 }
 
 /* Durante o loading o header fica invisível (regra só vale com JS
@@ -252,8 +253,8 @@ html.js body:not(.loaded) header {
 /* Botão hambúrguer circular sobre a superfície .glass */
 .botao-menu {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: var(--tamanho-botao-menu);
+  height: var(--tamanho-botao-menu);
   border-radius: var(--raio-circulo);
   display: inline-flex;
   flex-direction: column;
@@ -295,10 +296,10 @@ body.drawer-aberto .botao-menu span:nth-child(3) {
   top: 0;
   right: 0;
   bottom: 0;
-  width: var(--largura-xs);
+  width: var(--largura-drawer);
   z-index: var(--z-drawer);
   border-radius: var(--raio-md) 0 0 var(--raio-md);
-  padding: calc(var(--altura-header) + var(--esp-lg)) var(--esp-lg) var(--esp-lg);
+  padding: calc(var(--altura-header) + var(--padding-drawer)) var(--padding-drawer) var(--padding-drawer);
   transform: translateX(100%);
   transition:
     transform var(--duracao-md) var(--ease-fluido),
@@ -318,7 +319,7 @@ body.drawer-aberto .drawer-menu {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
+  gap: var(--gap-drawer);
 }
 
 .drawer-menu a {
@@ -356,12 +357,12 @@ body:has(.pagina-home) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--gap-md);
-  max-width: var(--largura-xl);
+  gap: var(--gap-home);
+  max-width: var(--largura-conteudo);
   margin: 0 auto;
   height: 100dvh;
   overflow: hidden;
-  padding: calc(var(--altura-header) + var(--esp-md)) var(--respiro-lateral) var(--esp-md);
+  padding: calc(var(--altura-header) + var(--padding-home-vert)) var(--padding-pagina) var(--padding-home-vert);
 }
 
 /* --- Composição dos mockups ---
@@ -369,7 +370,7 @@ body:has(.pagina-home) {
    uma imagem única, sem medidas fixas que vazam no mobile */
 .home-mockups {
   position: relative;
-  width: var(--largura-md);
+  width: var(--largura-mockups);
   aspect-ratio: 1 / 1;
   flex-shrink: 1;
   min-height: 0;
@@ -428,9 +429,9 @@ body:has(.pagina-home) {
 .home-conteudo {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
+  gap: var(--gap-home);
   width: 100%;
-  max-width: var(--largura-sm);
+  max-width: var(--largura-chat);
   min-height: 0;
 }
 
@@ -460,13 +461,13 @@ body:has(.pagina-home) {
   }
 
   /* A largura desktop dos mockups já vem do próprio token
-     --largura-md (tokens.css) */
+     --largura-mockups (tokens.css) */
   .home-mockups {
     flex: 0 1 auto;
   }
 
   .home-conteudo {
-    flex: 0 1 var(--largura-sm);
+    flex: 0 1 var(--largura-chat);
   }
 }
 
@@ -478,10 +479,10 @@ body:has(.pagina-home) {
    conteúdo não fique atrás do chat em barra
    ========================================================== */
 .pagina-conteudo {
-  max-width: var(--largura-xl);
+  max-width: var(--largura-conteudo);
   min-height: 100dvh;
   margin: 0 auto;
-  padding: calc(var(--altura-header) + var(--esp-lg)) var(--respiro-lateral) calc(var(--esp-xl) + var(--esp-xl));
+  padding: calc(var(--altura-header) + var(--padding-conteudo-topo)) var(--padding-pagina) var(--respiro-conteudo-base);
 }
 
 .pagina-conteudo h1 {
@@ -512,7 +513,7 @@ body:has(.pagina-home) {
 .chat-trilha {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--gap-sm);
+  gap: var(--gap-trilha);
 }
 
 .chat-trilha:empty {
@@ -527,7 +528,7 @@ body:has(.pagina-home) {
   background: var(--cor-superficie-suave);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-pill);
-  padding: var(--esp-xs) var(--esp-md);
+  padding: var(--padding-chip);
   cursor: pointer;
   transition: border-color var(--duracao-xs) var(--ease-padrao),
     background var(--duracao-xs) var(--ease-padrao);
@@ -546,7 +547,7 @@ body:has(.pagina-home) {
 
 /* Corpo: indicador "digitando" + resposta atual da Jessy */
 .chat-corpo {
-  min-height: var(--esp-xl);
+  min-height: var(--altura-corpo-chat);
 }
 
 .chat-resposta {
@@ -557,8 +558,8 @@ body:has(.pagina-home) {
 
 .chat-digitando {
   display: flex;
-  gap: var(--gap-xs);
-  padding: var(--esp-sm) 0;
+  gap: var(--gap-digitando);
+  padding: var(--gap-trilha) 0;
 }
 
 /* O display:flex acima venceria o atributo hidden do HTML,
@@ -601,14 +602,14 @@ body:has(.pagina-home) {
 .chat-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--gap-sm);
+  gap: var(--gap-trilha);
 }
 
 /* Formulário: campo de pergunta + enviar */
 .chat-form {
   display: flex;
   align-items: center;
-  gap: var(--gap-sm);
+  gap: var(--gap-trilha);
 }
 
 .chat-form input {
@@ -620,7 +621,7 @@ body:has(.pagina-home) {
   background: var(--cor-superficie-suave);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-pill);
-  padding: var(--esp-sm) var(--esp-md);
+  padding: var(--padding-campo);
   outline: none;
 }
 
@@ -634,8 +635,8 @@ body:has(.pagina-home) {
 
 .chat-enviar {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: var(--tamanho-enviar);
+  height: var(--tamanho-enviar);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -660,8 +661,8 @@ body:has(.pagina-home) {
 /* Botão de minimizar (expanded/bar) e ícone do fab */
 .chat-minimizar {
   position: absolute;
-  top: var(--esp-sm);
-  right: var(--esp-sm);
+  top: var(--margem-minimizar);
+  right: var(--margem-minimizar);
   width: 28px;
   height: 28px;
   border: none;
@@ -700,23 +701,23 @@ body:has(.pagina-home) {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
+  gap: var(--gap-chat);
   width: 100%;
-  padding: var(--esp-lg) var(--esp-md) var(--esp-md);
+  padding: var(--padding-chat-topo) var(--padding-chat) var(--padding-chat);
 }
 
 /* ----- Estado 2: barra fixa na base da tela ----- */
 .chat--bar {
   position: fixed;
-  left: var(--esp-md);
-  right: var(--esp-md);
-  bottom: var(--esp-md);
+  left: var(--margem-barra);
+  right: var(--margem-barra);
+  bottom: var(--margem-barra);
   margin-inline: auto;
-  max-width: var(--largura-lg);
+  max-width: var(--largura-chat-bar);
   display: flex;
   align-items: center;
-  gap: var(--gap-sm);
-  padding: var(--esp-sm) var(--esp-md);
+  gap: var(--gap-trilha);
+  padding: var(--padding-barra);
   border-radius: var(--raio-pill);
 }
 
@@ -730,7 +731,7 @@ body:has(.pagina-home) {
 
 .chat--bar .chat-trilha .chip {
   font-size: var(--texto-xs);
-  padding: var(--esp-xs) var(--esp-sm);
+  padding: var(--padding-chip-compacto);
   white-space: nowrap;
 }
 
@@ -739,9 +740,9 @@ body:has(.pagina-home) {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(100% + var(--esp-sm));
+  bottom: calc(100% + var(--gap-trilha));
   min-height: 0;
-  padding: var(--esp-md);
+  padding: var(--padding-corpo-chat);
   border-radius: var(--raio-md);
   background: var(--cor-fundo);
   border: 1px solid var(--cor-borda);
@@ -763,10 +764,10 @@ body:has(.pagina-home) {
 /* ----- Estado 3: botão flutuante (modo leitura) ----- */
 .chat--fab {
   position: fixed;
-  right: var(--esp-md);
-  bottom: var(--esp-md);
-  width: var(--tamanho-fab);
-  height: var(--tamanho-fab);
+  right: var(--margem-barra);
+  bottom: var(--margem-barra);
+  width: var(--altura-fab);
+  height: var(--altura-fab);
   border-radius: var(--raio-circulo);
   padding: 0;
   cursor: pointer;

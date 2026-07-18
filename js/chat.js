@@ -27,6 +27,7 @@ const script = {
     },
     projetos: {
         rotulo: 'Projetos',
+        pagina: 'projetos',
         resposta: 'A Jéssica tem 4 cases de UX/UI e Web: Coinple, Momentos, Diagnóstico de Liderança e Motorline. Escolha um abaixo para abrir!',
         sugestoes: ['coinple', 'momentos', 'diagnostico', 'motorline']
     },
