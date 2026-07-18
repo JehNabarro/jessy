@@ -213,7 +213,7 @@ header {
   /* Mesmo contêiner do conteúdo da home (max-width centrado e o
      mesmo respiro lateral): assim a marca alinha com o texto em
      qualquer largura de tela */
-  max-width: var(--largura-conteudo);
+  /*max-width: var(--largura-conteudo);*/
   padding: 0 var(--respiro-lateral);
   margin-inline: auto;
   height: var(--altura-header);
@@ -484,6 +484,33 @@ body:has(.pagina-home) {
   .home-conteudo {
     flex: 0 1 var(--largura-chat);
   }
+}
+
+/* ==========================================================
+   PÁGINAS DE CONTEÚDO — sections clonadas dos templates pelo
+   router (js/router.js) no momento da navegação. A entrada e a
+   saída são animadas no JS só com transform/opacity; aqui fica
+   apenas o layout estático. O respiro inferior garante que o
+   conteúdo não fique atrás do chat em barra
+   ========================================================== */
+.pagina-conteudo {
+  max-width: var(--largura-conteudo);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: calc(var(--altura-header) + var(--esp-lg)) var(--respiro-lateral) calc(var(--esp-xl) + var(--esp-xl));
+}
+
+.pagina-conteudo h1 {
+  font-size: var(--texto-titulo);
+  font-weight: var(--peso-forte);
+  line-height: 1.05;
+}
+
+/* O foco vai para o h1 programaticamente ao trocar de página;
+   sem anel visual quando o foco não veio do teclado */
+.pagina-conteudo h1:focus:not(:focus-visible),
+.home-titulo:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* ==========================================================

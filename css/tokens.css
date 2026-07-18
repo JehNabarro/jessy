@@ -118,7 +118,7 @@
      ---------------------------------------------------------- */
    --altura-header: 76px;
    --largura-conteudo: 1200px;
-   --respiro-lateral: var(--esp-md);
+   --respiro-lateral: var(--esp-lg);
    --largura-chat: 480px;
    /* chat expandido */
    --largura-chat-bar: 680px;

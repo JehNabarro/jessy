@@ -1,35 +1,20 @@
 // main.js — ponto de entrada da aplicação (ES module)
 //
 // Responsabilidades:
-// 1. Renderizar a home a partir do <template id="home">
-// 2. Iniciar o header (auto-hide + drawer)
-// 3. Iniciar o Chat Jessy no estado expandido dentro da home
+// 1. Iniciar o header (auto-hide + drawer)
+// 2. Iniciar o Chat Jessy (sem slot: o router entrega o slot da
+//    home ao renderizar a página inicial)
+// 3. Iniciar o router, que clona a página inicial a partir do hash
+//    da URL (home por padrão) e assume toda a navegação
 
 import { initHeader } from './header.js';
 import { initChat } from './chat.js';
-
-// ------------------------------------------------------------
-// Renderiza a home clonando o template para dentro do <main>
-// ------------------------------------------------------------
-function renderizarHome() {
-    const template = document.getElementById('home');
-    const main = document.querySelector('main');
-    if (!template || !main) {
-        console.error('Home: template "#home" ou <main> não encontrados.');
-        return null;
-    }
-    const secao = template.content.firstElementChild.cloneNode(true);
-    // A section entra antes do chat (que é filho direto do main)
-    main.prepend(secao);
-    return secao;
-}
-
-const home = renderizarHome();
+import { initRouter } from './router.js';
 
 initHeader();
 
-// O chat é montado no slot da home (estado expandido padrão)
-initChat(
-    document.getElementById('chat-jessy-ia'),
-    home ? home.querySelector('#chat-slot') : null
-);
+// O chat nasce sem slot; se a página inicial for a home, o router
+// chama definirSlotHome + definirEstado('expanded') na sequência
+initChat(document.getElementById('chat-jessy-ia'), null);
+
+initRouter();

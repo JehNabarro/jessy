@@ -123,10 +123,17 @@
   <!-- Drawer lateral aberto pelo hambúrguer. Enquanto ele estiver
        aberto (body.drawer-aberto), o header não se esconde -->
   <nav id="drawer-menu" class="drawer-menu glass" aria-label="Menu principal">
+    <!-- Os hrefs são âncoras reais (#coinple, #sobre...): com JS o
+         clique é interceptado pelo router; sem JS continuam válidos -->
     <ul>
-      <li><a href="#about">Sobre</a></li>
-      <li><a href="#projects">Projetos</a></li>
-      <li><a href="#contact">Contato</a></li>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#projetos">Projetos</a></li>
+      <li><a href="#coinple">Coinple</a></li>
+      <li><a href="#momentos">Momentos</a></li>
+      <li><a href="#diagnostico">Diagnóstico de Liderança</a></li>
+      <li><a href="#motorline">Motorline</a></li>
+      <li><a href="#sobre">Quem sou eu</a></li>
+      <li><a href="#contato">Contato</a></li>
     </ul>
   </nav>
 
@@ -149,51 +156,75 @@
       </div>
 
       <div class="home-conteudo">
-        <h1 class="home-titulo">Simplificar o complicado!</h1>
+        <!-- tabindex="-1": o router move o foco para o h1 ao navegar -->
+        <h1 class="home-titulo" id="titulo-home" tabindex="-1">Simplificar o complicado!</h1>
         <p class="home-subtitulo">Design e Web para negócios em crescimento.</p>
         <!-- Slot onde o Chat Jessy é encaixado no estado expandido -->
         <div id="chat-slot"></div>
       </div>
     </section>
-    </main>
-  </template>
-  <!-- Projetos -->
-  <template id="projects">
-    <section>
-    </section>
-    </main>
   </template>
 
-  <!-- Projeto Motorline -->
-  <template id="motorline-project">
-    <section>
+  <!-- Páginas de conteúdo: clonadas pelo router (js/router.js) no
+       momento da navegação. Cases de projeto usam <article>;
+       os h1 têm tabindex="-1" para receber o foco ao trocar de página -->
+
+  <template id="projetos">
+    <section class="pagina-conteudo" aria-labelledby="titulo-projetos">
+      <article>
+        <h1 id="titulo-projetos" tabindex="-1">Projetos</h1>
+      </article>
     </section>
   </template>
 
-  <!-- Projeto Kienbaum -->
-  <template id="kienbaum-project">
-    <section>
+  <!-- Projeto Coinple -->
+  <template id="coinple">
+    <section class="pagina-conteudo" aria-labelledby="titulo-coinple">
+      <article>
+        <h1 id="titulo-coinple" tabindex="-1">Coinple</h1>
+      </article>
     </section>
   </template>
 
   <!-- Projeto Momentos -->
-  <template id="momentos-project">
-    <section>
+  <template id="momentos">
+    <section class="pagina-conteudo" aria-labelledby="titulo-momentos">
+      <article>
+        <h1 id="titulo-momentos" tabindex="-1">Momentos</h1>
+      </article>
     </section>
   </template>
 
-  <!-- Sobre  -->
-  <template id="about">
-    <section>
+  <!-- Projeto Diagnóstico de Liderança -->
+  <template id="diagnostico">
+    <section class="pagina-conteudo" aria-labelledby="titulo-diagnostico">
+      <article>
+        <h1 id="titulo-diagnostico" tabindex="-1">Diagnóstico de Liderança</h1>
+      </article>
     </section>
-    </main>
   </template>
 
-  <!-- Contato  -->
-  <template id="contact">
-    <section>
+  <!-- Projeto Motorline -->
+  <template id="motorline">
+    <section class="pagina-conteudo" aria-labelledby="titulo-motorline">
+      <article>
+        <h1 id="titulo-motorline" tabindex="-1">Motorline</h1>
+      </article>
     </section>
-    </main>
+  </template>
+
+  <!-- Quem sou eu -->
+  <template id="sobre">
+    <section class="pagina-conteudo" aria-labelledby="titulo-sobre">
+      <h1 id="titulo-sobre" tabindex="-1">Quem sou eu</h1>
+    </section>
+  </template>
+
+  <!-- Contato -->
+  <template id="contato">
+    <section class="pagina-conteudo" aria-labelledby="titulo-contato">
+      <h1 id="titulo-contato" tabindex="-1">Contato</h1>
+    </section>
   </template>
 
   <!-- Filtro de distorção usado pela .glass -->

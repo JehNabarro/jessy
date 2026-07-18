@@ -15,7 +15,10 @@
 // Dependências globais: gsap e Flip (carregados via CDN no index.html)
 
 // ------------------------------------------------------------
-// Roteiro da Jessy: cada nó tem um rótulo (chip) e uma resposta
+// Roteiro da Jessy: cada nó tem um rótulo (chip) e uma resposta.
+// Nós com a propriedade "pagina" também navegam (via router) para
+// a página correspondente ao responder. "sugestoes" troca os chips
+// oferecidos após a resposta (padrão: sugestoesPadrao)
 // ------------------------------------------------------------
 const script = {
     inicio: {
@@ -24,15 +27,38 @@ const script = {
     },
     projetos: {
         rotulo: 'Projetos',
-        resposta: 'A Jéssica tem cases de UX/UI e Web como Motorline, Kienbaum e Momentos. Em breve você vai poder abrir cada um por aqui.'
+        resposta: 'A Jéssica tem 4 cases de UX/UI e Web: Coinple, Momentos, Diagnóstico de Liderança e Motorline. Escolha um abaixo para abrir!',
+        sugestoes: ['coinple', 'momentos', 'diagnostico', 'motorline']
+    },
+    coinple: {
+        rotulo: 'Coinple',
+        pagina: 'coinple',
+        resposta: 'Boa escolha! Abrindo o case do Coinple para você.'
+    },
+    momentos: {
+        rotulo: 'Momentos',
+        pagina: 'momentos',
+        resposta: 'Boa escolha! Abrindo o case do Momentos para você.'
+    },
+    diagnostico: {
+        rotulo: 'Diagnóstico de Liderança',
+        pagina: 'diagnostico',
+        resposta: 'Boa escolha! Abrindo o case do Diagnóstico de Liderança para você.'
+    },
+    motorline: {
+        rotulo: 'Motorline',
+        pagina: 'motorline',
+        resposta: 'Boa escolha! Abrindo o case da Motorline para você.'
     },
     sobre: {
         rotulo: 'Quem é a Jéssica?',
-        resposta: 'A Jéssica Nabarro é designer de produto e web. Ela simplifica o complicado: transforma processos confusos em interfaces claras para negócios em crescimento.'
+        pagina: 'sobre',
+        resposta: 'A Jéssica Nabarro é designer de produto e web. Ela simplifica o complicado: transforma processos confusos em interfaces claras para negócios em crescimento. Abrindo a página dela para você.'
     },
     contato: {
         rotulo: 'Contato',
-        resposta: 'Você pode falar com a Jéssica pelo e-mail jeh.nabarro@gmail.com ou pelo LinkedIn. Pergunte sobre o LinkedIn que eu te mostro o caminho.'
+        pagina: 'contato',
+        resposta: 'Você pode falar com a Jéssica pelo e-mail jeh.nabarro@gmail.com ou pelo LinkedIn. Abrindo a página de contato para você.'
     },
     linkedin: {
         rotulo: 'LinkedIn',
@@ -44,11 +70,16 @@ const script = {
     }
 };
 
-// Nós oferecidos como chips de sugestão
-const sugestoes = ['projetos', 'sobre', 'contato'];
+// Nós oferecidos como chips de sugestão por padrão
+const sugestoesPadrao = ['projetos', 'sobre', 'contato'];
 
 // Mapeamento de palavras-chave da digitação livre para os nós
+// (os projetos vêm antes do genérico /projet/; acentos opcionais)
 const palavrasChave = [
+    { regex: /coinple/i, no: 'coinple' },
+    { regex: /momentos?/i, no: 'momentos' },
+    { regex: /diagn[oó]stic|lideran[cç]a/i, no: 'diagnostico' },
+    { regex: /motor\s*line/i, no: 'motorline' },
     { regex: /projet/i, no: 'projetos' },
     { regex: /linkedin/i, no: 'linkedin' },
     { regex: /sobre|j[eé]ssica|quem/i, no: 'sobre' },
@@ -101,15 +132,8 @@ function construirDom() {
     elForm = raiz.querySelector('.chat-form');
     elInput = elForm.querySelector('input');
 
-    // Chips de sugestão fixos
-    for (const no of sugestoes) {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'chip';
-        chip.textContent = script[no].rotulo;
-        chip.addEventListener('click', () => perguntar(no, script[no].rotulo));
-        elChips.appendChild(chip);
-    }
+    // Chips de sugestão iniciais
+    renderizarChips(sugestoesPadrao);
 
     // Digitação livre com mapeamento de palavras-chave
     elForm.addEventListener('submit', (e) => {
@@ -137,6 +161,29 @@ function construirDom() {
 }
 
 // ------------------------------------------------------------
+// Chips de sugestão (mudam conforme o nó respondido; ex.: o nó
+// "projetos" oferece os 4 projetos como chips)
+// ------------------------------------------------------------
+function renderizarChips(nos) {
+    elChips.innerHTML = '';
+    for (const no of nos) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = script[no].rotulo;
+        chip.addEventListener('click', () => perguntar(no, script[no].rotulo));
+        elChips.appendChild(chip);
+    }
+}
+
+// Nó com página associada: pede ao router para navegar até ela
+function navegarSeTiverPagina(no) {
+    if (script[no].pagina && window.router) {
+        window.router.navegarPara(script[no].pagina);
+    }
+}
+
+// ------------------------------------------------------------
 // Trilha (caminho de pão)
 // ------------------------------------------------------------
 function renderizarTrilha() {
@@ -161,6 +208,9 @@ function voltarPara(indice) {
     // Reexibição rápida (sem indicador "digitando")
     gsap.fromTo(elResposta, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
     elResposta.textContent = script[no].resposta;
+    renderizarChips(script[no].sugestoes || sugestoesPadrao);
+    // Voltar para um nó de página também renavega até ela
+    navegarSeTiverPagina(no);
 }
 
 // ------------------------------------------------------------
@@ -170,6 +220,10 @@ function voltarPara(indice) {
 function perguntar(no, rotulo) {
     trilha.push({ no, rotulo });
     renderizarTrilha();
+
+    // A navegação dispara junto com a resposta: a hero sai e o chat
+    // vai para a barra enquanto a Jessy "digita"
+    navegarSeTiverPagina(no);
 
     const tl = gsap.timeline();
 
@@ -183,10 +237,11 @@ function perguntar(no, rotulo) {
     });
     tl.to({}, { duration: 0.9 }); // a Jessy "pensa" um instante
 
-    // 3. Nova resposta entra
+    // 3. Nova resposta entra (e os chips do nó, se ele definir)
     tl.call(() => {
         elDigitando.hidden = true;
         elResposta.textContent = script[no].resposta;
+        renderizarChips(script[no].sugestoes || sugestoesPadrao);
     });
     tl.fromTo(elResposta, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
 }
@@ -226,6 +281,18 @@ export function definirEstado(novo) {
 }
 
 // ------------------------------------------------------------
+// Reancora o chat em um novo slot da home. Necessário porque o
+// router remove a section da home do DOM ao sair dela e clona uma
+// nova ao voltar — a referência antiga do slot morre junto
+// ------------------------------------------------------------
+export function definirSlotHome(slot) {
+    slotHome = slot || null;
+    if (slotHome && raiz && estado === 'expanded' && raiz.parentElement !== slotHome) {
+        slotHome.appendChild(raiz);
+    }
+}
+
+// ------------------------------------------------------------
 // Inicialização
 // ------------------------------------------------------------
 export function initChat(elemento, slot) {
@@ -250,5 +317,5 @@ export function initChat(elemento, slot) {
 
     // API global para outras telas trocarem o estado sem importar
     // o módulo (ex.: overlays de case colocam o chat em fab)
-    window.jessyChat = { definirEstado, perguntar };
+    window.jessyChat = { definirEstado, perguntar, definirSlotHome };
 }

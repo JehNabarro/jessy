@@ -102,9 +102,18 @@ export function initHeader() {
     const drawer = document.getElementById('drawer-menu');
     if (botaoMenu && drawer) {
         botaoMenu.addEventListener('click', () => alternarDrawer(botaoMenu));
-        // Clicar em um link do menu fecha o drawer
+        // Clicar em um link do menu navega via router e fecha o
+        // drawer. O salto de âncora nativo é prevenido; sem JS os
+        // hrefs continuam funcionando como âncoras normais
         drawer.addEventListener('click', (e) => {
-            if (e.target.closest('a')) alternarDrawer(botaoMenu, true);
+            const link = e.target.closest('a');
+            if (!link) return;
+            const id = (link.getAttribute('href') || '').replace('#', '');
+            if (id && window.router) {
+                e.preventDefault();
+                window.router.navegarPara(id);
+            }
+            alternarDrawer(botaoMenu, true);
         });
         // Esc também fecha
         window.addEventListener('keydown', (e) => {
