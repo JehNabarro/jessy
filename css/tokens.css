@@ -75,8 +75,6 @@
      todos usam --fonte-principal.
      ---------------------------------------------------------- */
    --fonte-principal: 'Glory', sans-serif;
-   --fonte-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-   /* fallback legado */
 
    --peso-regular: 400;
    --peso-medio: 600;
@@ -91,23 +89,34 @@
    --texto-titulo: clamp(30px, min(8.5vw, 8dvh), 72px);
    --texto-subtitulo: clamp(14px, min(3vw, 3dvh), 22px);
    --espaco-letras-orbital: 3.3px;
-   --esp-fluido: clamp(8px, 2dvh, 30px);
 
    /* ----------------------------------------------------------
-     Espaçamento
+     Espaçamento — escala fluida com clamp():
+     o máximo é o valor histórico (4/8/16/30/64px), atingido a
+     partir de ~390px de largura; abaixo disso encolhe suave
      ---------------------------------------------------------- */
-   --esp-xs: 4px;
-   --esp-sm: 8px;
-   --esp-md: 16px;
+   --esp-xs: clamp(3px, 1vw, 4px);
+   --esp-sm: clamp(6px, 2vw, 8px);
+   --esp-md: clamp(12px, 4.1vw, 16px);
    /* respiro do vidro dentro do wrapper */
-   --esp-lg: 30px;
-   /* órbita do texto e deslocamento de entrada da home */
-   --esp-xl: 64px;
+   --esp-lg: clamp(20px, 7.7vw, 30px);
+   /* órbita do texto e deslocamento de entrada da home
+      (o router.js lê --esp-lg via getComputedStyle) */
+   --esp-xl: clamp(40px, 16.4vw, 64px);
+
+   /* ----------------------------------------------------------
+     Gap — mesma escala do espaçamento; o md também cede em
+     altura (2dvh) para telas baixas, como o conteúdo da home
+     ---------------------------------------------------------- */
+   --gap-xs: var(--esp-xs);
+   --gap-sm: var(--esp-sm);
+   --gap-md: clamp(var(--esp-sm), 2dvh, var(--esp-md));
+   --gap-lg: var(--esp-lg);
+   --gap-xl: var(--esp-xl);
 
    /* ----------------------------------------------------------
      Raios de borda
      ---------------------------------------------------------- */
-   --raio-sm: 12px;
    --raio-md: 18px;
    --raio-pill: 999px;
    /* chips, barra do chat */
@@ -117,14 +126,24 @@
      Layout
      ---------------------------------------------------------- */
    --altura-header: 76px;
-   --largura-conteudo: 1200px;
    --respiro-lateral: var(--esp-lg);
-   --largura-chat: 480px;
-   /* chat expandido */
-   --largura-chat-bar: 680px;
-   /* chat em barra na base */
    --tamanho-fab: 60px;
    /* chat em botão flutuante */
+
+   /* ----------------------------------------------------------
+     Largura — escala mobile-first; só o md muda no desktop
+     (breakpoint de 1024px, o mesmo de direção do style.css)
+     ---------------------------------------------------------- */
+   --largura-xs: min(220px, 80vw);
+   /* drawer do menu */
+   --largura-sm: 480px;
+   /* chat expandido / coluna de texto da home */
+   --largura-md: min(100%, 46dvh, 480px);
+   /* composição dos mockups */
+   --largura-lg: 680px;
+   /* chat em barra na base */
+   --largura-xl: 1200px;
+   /* contêiner de conteúdo */
 
    /* ----------------------------------------------------------
      Movimento — durações e easings
@@ -163,7 +182,7 @@
    --z-base: 1;
    /* vidro */
    --z-elevado: 2;
-   /* variação .quadrado */
+   /* mockup central acima dos laterais */
    --z-chat: 90;
    /* chat flutuante (bar/fab) */
    --z-header: 100;
@@ -171,4 +190,12 @@
    --z-drawer: 200;
    /* menu lateral acima do header */
    --z-preloader: 9999;
+}
+
+/* Desktop: os mockups passam a escalar pela viewport,
+   não pelo contêiner */
+@media (min-width: 1024px) {
+   :root {
+      --largura-md: min(42vw, 80dvh, 560px);
+   }
 }

@@ -167,21 +167,6 @@ html.js body.loaded .pagina-home {
   border-radius: var(--raio-circulo);
 }
 
-/* Exemplo de segundo vidro quadrado */
-.glass.quadrado {
-  position: absolute;
-  width: 240px;
-  height: 240px;
-  border-radius: var(--raio-md);
-  /* chanfro suave */
-  top: 200px;
-  left: 200px;
-  /* sobe um pouquinho o z-index se precisar ficar mais no topo */
-  z-index: var(--z-elevado);
-}
-
-
-
 /* ==========================================================
    CSS para a grade interativa (canvas)
    ========================================================== */
@@ -213,7 +198,6 @@ header {
   /* Mesmo contêiner do conteúdo da home (max-width centrado e o
      mesmo respiro lateral): assim a marca alinha com o texto em
      qualquer largura de tela */
-  /*max-width: var(--largura-conteudo);*/
   padding: 0 var(--respiro-lateral);
   margin-inline: auto;
   height: var(--altura-header);
@@ -311,7 +295,7 @@ body.drawer-aberto .botao-menu span:nth-child(3) {
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(220px, 80vw);
+  width: var(--largura-xs);
   z-index: var(--z-drawer);
   border-radius: var(--raio-md) 0 0 var(--raio-md);
   padding: calc(var(--altura-header) + var(--esp-lg)) var(--esp-lg) var(--esp-lg);
@@ -334,7 +318,7 @@ body.drawer-aberto .drawer-menu {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-md);
+  gap: var(--gap-md);
 }
 
 .drawer-menu a {
@@ -372,8 +356,8 @@ body:has(.pagina-home) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--esp-md);
-  max-width: var(--largura-conteudo);
+  gap: var(--gap-md);
+  max-width: var(--largura-xl);
   margin: 0 auto;
   height: 100dvh;
   overflow: hidden;
@@ -385,7 +369,7 @@ body:has(.pagina-home) {
    uma imagem única, sem medidas fixas que vazam no mobile */
 .home-mockups {
   position: relative;
-  width: min(100%, 46dvh, 480px);
+  width: var(--largura-md);
   aspect-ratio: 1 / 1;
   flex-shrink: 1;
   min-height: 0;
@@ -444,9 +428,9 @@ body:has(.pagina-home) {
 .home-conteudo {
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--esp-sm), 2dvh, var(--esp-md));
+  gap: var(--gap-md);
   width: 100%;
-  max-width: var(--largura-chat);
+  max-width: var(--largura-sm);
   min-height: 0;
 }
 
@@ -469,20 +453,20 @@ body:has(.pagina-home) {
     flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
-    /*gap: clamp(var(--esp-lg), 6vw, 120px);*/
     min-height: 0;
     overflow: visible;
     height: 100dvh;
     padding-top: var(--altura-header);
   }
 
+  /* A largura desktop dos mockups já vem do próprio token
+     --largura-md (tokens.css) */
   .home-mockups {
     flex: 0 1 auto;
-    width: min(42vw, 80dvh, 560px);
   }
 
   .home-conteudo {
-    flex: 0 1 var(--largura-chat);
+    flex: 0 1 var(--largura-sm);
   }
 }
 
@@ -494,7 +478,7 @@ body:has(.pagina-home) {
    conteúdo não fique atrás do chat em barra
    ========================================================== */
 .pagina-conteudo {
-  max-width: var(--largura-conteudo);
+  max-width: var(--largura-xl);
   min-height: 100dvh;
   margin: 0 auto;
   padding: calc(var(--altura-header) + var(--esp-lg)) var(--respiro-lateral) calc(var(--esp-xl) + var(--esp-xl));
@@ -528,7 +512,7 @@ body:has(.pagina-home) {
 .chat-trilha {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-sm);
+  gap: var(--gap-sm);
 }
 
 .chat-trilha:empty {
@@ -562,7 +546,7 @@ body:has(.pagina-home) {
 
 /* Corpo: indicador "digitando" + resposta atual da Jessy */
 .chat-corpo {
-  min-height: 64px;
+  min-height: var(--esp-xl);
 }
 
 .chat-resposta {
@@ -573,7 +557,7 @@ body:has(.pagina-home) {
 
 .chat-digitando {
   display: flex;
-  gap: var(--esp-xs);
+  gap: var(--gap-xs);
   padding: var(--esp-sm) 0;
 }
 
@@ -617,14 +601,14 @@ body:has(.pagina-home) {
 .chat-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-sm);
+  gap: var(--gap-sm);
 }
 
 /* Formulário: campo de pergunta + enviar */
 .chat-form {
   display: flex;
   align-items: center;
-  gap: var(--esp-sm);
+  gap: var(--gap-sm);
 }
 
 .chat-form input {
@@ -716,7 +700,7 @@ body:has(.pagina-home) {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-md);
+  gap: var(--gap-md);
   width: 100%;
   padding: var(--esp-lg) var(--esp-md) var(--esp-md);
 }
@@ -728,10 +712,10 @@ body:has(.pagina-home) {
   right: var(--esp-md);
   bottom: var(--esp-md);
   margin-inline: auto;
-  max-width: var(--largura-chat-bar);
+  max-width: var(--largura-lg);
   display: flex;
   align-items: center;
-  gap: var(--esp-sm);
+  gap: var(--gap-sm);
   padding: var(--esp-sm) var(--esp-md);
   border-radius: var(--raio-pill);
 }
