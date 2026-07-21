@@ -23,7 +23,8 @@
 const script = {
     inicio: {
         rotulo: 'Início',
-        resposta: 'Oi! Eu sou a Jessy, assistente virtual da Jéssica. Pergunte sobre os projetos, sobre ela ou como entrar em contato.'
+        resposta: 'Olá! Eu sou a assistente da Jéssica Nabarro. Deseja começar por onde?',
+        sugestoes: ['projetos', 'sobre', 'contato', 'coinple']
     },
     projetos: {
         rotulo: 'Projetos',
@@ -93,20 +94,21 @@ const palavrasChave = [
 let raiz = null;          // o elemento #chat-jessy-ia
 let slotHome = null;      // #chat-slot dentro da home (estado expanded)
 let estado = 'expanded';  // estado visual atual
-let estadoAnterior = 'expanded'; // para onde o fab volta ao expandir
-let trilha = [];          // caminho de pão: [{ no, rotulo }]
+let estadoAnterior = 'expanded'; // para onde o fab volta ao expandir 
 
 // Referências de DOM internas
-let elTrilha, elCorpo, elDigitando, elResposta, elChips, elForm, elInput;
+let elCorpo, elDigitando, elResposta, elChips, elForm, elInput;
+let elCaminho, elCaminhoTexto, elReticencias;
+let caminho = [];        // histórico de navegação: só cresce
+let contexto = 'home';
 
 // ------------------------------------------------------------
 // Construção do DOM interno
 // ------------------------------------------------------------
 function construirDom() {
-    raiz.classList.add('chat', 'glass', 'chat--expanded');
+    raiz.classList.add('chat', 'glass', 'chat--expanded', 'chat--na-home');
     raiz.innerHTML = `
     <button class="chat-minimizar" type="button" aria-label="Minimizar chat">&minus;</button>
-    <div class="chat-trilha" role="list" aria-label="Perguntas feitas"></div>
     <div class="chat-corpo">
       <div class="chat-digitando" hidden aria-hidden="true">
         <span></span><span></span><span></span>
@@ -120,18 +122,24 @@ function construirDom() {
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
       </button>
     </form>
+    <nav class="chat-caminho" aria-label="Caminho de navegação">
+      <span class="caminho-reticencias" hidden>…</span>
+      <span class="caminho-texto"></span>
+    </nav>
     <button class="chat-fab-icone" type="button" aria-label="Abrir chat">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
     </button>
   `;
 
-    elTrilha = raiz.querySelector('.chat-trilha');
     elCorpo = raiz.querySelector('.chat-corpo');
     elDigitando = raiz.querySelector('.chat-digitando');
     elResposta = raiz.querySelector('.chat-resposta');
     elChips = raiz.querySelector('.chat-chips');
     elForm = raiz.querySelector('.chat-form');
     elInput = elForm.querySelector('input');
+    elCaminho = raiz.querySelector('.chat-caminho');
+    elCaminhoTexto = raiz.querySelector('.caminho-texto');
+    elReticencias = raiz.querySelector('.caminho-reticencias');
 
     // Chips de sugestão iniciais
     renderizarChips(sugestoesPadrao);
@@ -184,43 +192,12 @@ function navegarSeTiverPagina(no) {
     }
 }
 
-// ------------------------------------------------------------
-// Trilha (caminho de pão)
-// ------------------------------------------------------------
-function renderizarTrilha() {
-    elTrilha.innerHTML = '';
-    trilha.forEach((item, indice) => {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'chip';
-        chip.setAttribute('role', 'listitem');
-        chip.textContent = item.rotulo;
-        chip.addEventListener('click', () => voltarPara(indice));
-        elTrilha.appendChild(chip);
-    });
-}
-
-// Clicar em um chip da trilha: reexibe a resposta daquele nó e
-// remove os chips posteriores a ele
-function voltarPara(indice) {
-    trilha = trilha.slice(0, indice + 1);
-    renderizarTrilha();
-    const no = trilha[indice].no;
-    // Reexibição rápida (sem indicador "digitando")
-    gsap.fromTo(elResposta, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
-    elResposta.textContent = script[no].resposta;
-    renderizarChips(script[no].sugestoes || sugestoesPadrao);
-    // Voltar para um nó de página também renavega até ela
-    navegarSeTiverPagina(no);
-}
 
 // ------------------------------------------------------------
 // Nova pergunta: resposta anterior sai, "digitando" aparece,
 // nova resposta entra; a pergunta vira chip no fim da trilha
 // ------------------------------------------------------------
 function perguntar(no, rotulo) {
-    trilha.push({ no, rotulo });
-    renderizarTrilha();
 
     // A navegação dispara junto com a resposta: a hero sai e o chat
     // vai para a barra enquanto a Jessy "digita"
@@ -248,51 +225,172 @@ function perguntar(no, rotulo) {
 }
 
 // ------------------------------------------------------------
-// Troca de estado com GSAP FLIP (a trilha persiste em memória)
+// Troca de estado com efeito "bolha" (a trilha persiste em memória):
+// o chat encolhe e some no formato atual, troca de pai e de classe
+// invisível, e nasce crescendo no formato novo com overshoot
+// (--ease-bounce). Sem morph entre formatos: sem saltos.
 // ------------------------------------------------------------
-export function definirEstado(novo) {
-    if (!raiz || novo === estado) return;
 
-    const Flip = window.Flip;
-    const flipState = Flip.getState(raiz);
+// ------------------------------------------------------------
+// Tokens de movimento, lidos uma vez do CSS
+// ------------------------------------------------------------
+const estiloRaiz = getComputedStyle(document.documentElement);
+const tokenChat = (nome) => estiloRaiz.getPropertyValue(nome).trim();
+const reducaoMov = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    // No estado expandido o chat vive dentro do slot da home;
-    // em bar/fab ele vai para o <body> (position: fixed confiável,
-    // sem depender de ancestrais com transform)
-    if (novo === 'expanded' && slotHome) {
-        slotHome.appendChild(raiz);
-    } else if (novo !== 'expanded' && raiz.parentElement !== document.body) {
-        document.body.appendChild(raiz);
-    }
+// ------------------------------------------------------------
+// Posicionamento: o chat nunca troca de pai, só de coordenadas
+// ------------------------------------------------------------
 
-    raiz.classList.remove('chat--expanded', 'chat--bar', 'chat--fab');
-    raiz.classList.add(`chat--${novo}`);
+// Cola o chat por cima do #chat-slot da home (sem animação)
+function posicionarNoSlot() {
+    if (!slotHome || contexto !== 'home') return;
+    const r = slotHome.getBoundingClientRect();
+    gsap.set(raiz, { left: r.left, top: r.top, width: r.width, right: 'auto', bottom: 'auto' });
+}
+window.addEventListener('resize', posicionarNoSlot);
 
-    estadoAnterior = estado;
-    estado = novo;
-
-    Flip.from(flipState, {
+// Desliza o chat até um retângulo-alvo e, ao chegar, entrega a
+// ancoragem para o CSS (classe), limpando o estilo inline
+function deslizarPara(alvo, classeFinal) {
+    gsap.to(raiz, {
+        left: alvo.left,
+        top: alvo.top,
+        width: alvo.width,
         duration: 0.55,
         ease: 'power2.inOut',
-        absolute: true,
-        // Limpa o transform inline do FLIP para devolver o
-        // translateZ(0) definido em .glass
-        onComplete: () => gsap.set(raiz, { clearProps: 'transform' })
+        onComplete: () => {
+            if (classeFinal) raiz.classList.add(classeFinal);
+            gsap.set(raiz, { clearProps: 'left,top,width,right,bottom' });
+        }
+    });
+}
+
+// Retângulo da posição flutuante (canto inferior direito)
+function retanguloFlutuante() {
+    const margem = parseFloat(tokenChat('--esp-md')) || 16;
+    const largura = Math.min(
+        parseFloat(tokenChat('--largura-chat')) || 480,
+        window.innerWidth - margem * 2
+    );
+    return {
+        left: window.innerWidth - largura - margem,
+        top: window.innerHeight - raiz.offsetHeight - margem,
+        width: largura
+    };
+}
+
+// ------------------------------------------------------------
+// Contexto: home (chat aberto no slot, sem minimizar) ou
+// interna (chat flutuante, colapsa em fab ao rolar)
+// ------------------------------------------------------------
+export function definirContexto(novo) {
+    if (contexto === novo) return;
+    contexto = novo;
+    raiz.classList.toggle('chat--na-home', novo === 'home');
+
+    if (novo === 'interna') {
+        // Sai da home deslizando do slot até o canto inferior
+        if (estado !== 'expanded') definirEstado('expanded', true);
+        if (reducaoMov.matches) {
+            raiz.classList.add('chat--flutuante');
+            gsap.set(raiz, { clearProps: 'left,top,width,right,bottom' });
+        } else {
+            deslizarPara(retanguloFlutuante(), 'chat--flutuante');
+        }
+    } else {
+        // Volta para a home: reabre no slot, sem flutuar
+        raiz.classList.remove('chat--flutuante');
+        if (estado !== 'expanded') definirEstado('expanded', true);
+        if (reducaoMov.matches || !slotHome) {
+            posicionarNoSlot();
+        } else {
+            const r = slotHome.getBoundingClientRect();
+            deslizarPara({ left: r.left, top: r.top, width: r.width });
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// Estados expanded/fab com efeito bolha: some encolhendo num
+// canto, nasce crescendo no outro (sem morph entre formatos)
+// ------------------------------------------------------------
+export function definirEstado(novo, seco) {
+    if (!raiz || novo === estado) return;
+    estado = novo;
+
+    const trocar = () => {
+        raiz.classList.remove('chat--expanded', 'chat--fab');
+        raiz.classList.add(`chat--${novo}`);
+        // fab e expanded-flutuante ancoram pelo CSS; na home o
+        // expanded é reposicionado no slot
+        gsap.set(raiz, { clearProps: 'left,top,width,right,bottom' });
+        if (novo === 'expanded' && contexto === 'home') posicionarNoSlot();
+    };
+
+    if (seco || reducaoMov.matches) {
+        trocar();
+        gsap.set(raiz, { clearProps: 'transform,opacity' });
+        return;
+    }
+
+    gsap.timeline()
+        .to(raiz, {
+            scale: 0.85,
+            opacity: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+            transformOrigin: 'center center'
+        })
+        .call(trocar)
+        .fromTo(raiz,
+            { scale: 0.85, opacity: 0 },
+            {
+                scale: 1,
+                opacity: 1,
+                duration: 0.45,
+                ease: 'back.out(1.4)',
+                transformOrigin: 'center center',
+                clearProps: 'transform,opacity'
+            }
+        );
+}
+
+// ------------------------------------------------------------
+// Nas internas, rolar a página colapsa o chat em fab; ele só
+// reabre pelo clique no fab. Limiar ignora micro-scrolls
+// ------------------------------------------------------------
+let scrollBase = 0;
+window.addEventListener('scroll', () => {
+    if (contexto !== 'interna' || estado !== 'expanded') {
+        scrollBase = window.scrollY;
+        return;
+    }
+    if (Math.abs(window.scrollY - scrollBase) > 40) definirEstado('fab');
+}, { passive: true });
+
+// ------------------------------------------------------------
+// Breadcrumb: registro de TODA navegação (só cresce, nunca corta).
+// O fim (página atual) fica sempre visível; o "…" aparece no
+// início quando o texto estoura a largura
+// ------------------------------------------------------------
+export function registrarNavegacao(rotulo) {
+    caminho.push(rotulo);
+    elCaminhoTexto.textContent = caminho.join(' > ');
+    requestAnimationFrame(() => {
+        elReticencias.hidden = elCaminhoTexto.scrollWidth <= elCaminhoTexto.clientWidth;
+        elCaminhoTexto.scrollLeft = elCaminhoTexto.scrollWidth;
     });
 }
 
 // ------------------------------------------------------------
-// Reancora o chat em um novo slot da home. Necessário porque o
-// router remove a section da home do DOM ao sair dela e clona uma
-// nova ao voltar — a referência antiga do slot morre junto
+// Reancora a REFERÊNCIA do slot (o router clona a home a cada
+// volta): o chat não muda de pai, só de posição
 // ------------------------------------------------------------
 export function definirSlotHome(slot) {
     slotHome = slot || null;
-    if (slotHome && raiz && estado === 'expanded' && raiz.parentElement !== slotHome) {
-        slotHome.appendChild(raiz);
-    }
+    posicionarNoSlot();
 }
-
 // ------------------------------------------------------------
 // Inicialização
 // ------------------------------------------------------------
@@ -304,19 +402,18 @@ export function initChat(elemento, slot) {
         console.error('Chat Jessy: o seletor "#chat-jessy-ia" não encontrou nenhum elemento. Chat desativado.');
         return;
     }
-    if (!window.gsap || !window.Flip) {
-        console.error('Chat Jessy: GSAP/Flip não carregados (CDN). Chat desativado.');
+    if (!window.gsap) {
+        console.error('Chat Jessy: GSAP não carregado (CDN). Chat desativado.');
         return;
     }
-    gsap.registerPlugin(window.Flip);
 
     construirDom();
 
-    // Estado inicial: expandido dentro da home, com a saudação
-    if (slotHome) slotHome.appendChild(raiz);
+    // O chat vive no body em todos os estados (fixed); na home é
+    // posicionado por cima do #chat-slot
+    document.body.appendChild(raiz);
+    posicionarNoSlot();
     elResposta.textContent = script.inicio.resposta;
 
-    // API global para outras telas trocarem o estado sem importar
-    // o módulo (ex.: overlays de case colocam o chat em fab)
-    window.jessyChat = { definirEstado, perguntar, definirSlotHome };
+    window.jessyChat = { definirEstado, definirContexto, perguntar, registrarNavegacao, definirSlotHome };
 }

@@ -509,16 +509,28 @@ body:has(.pagina-home) {
   z-index: var(--z-chat);
 }
 
-/* Linha superior: trilha das perguntas (caminho de pão) */
-.chat-trilha {
+/* Caminho de navegação (breadcrumb): linha única abaixo do input.
+   Nunca quebra nem some; quando estoura a largura, o JS rola o
+   texto para o fim (página atual sempre visível) e mostra o "…" */
+.chat-caminho {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--gap-trilha);
+  align-items: center;
+  gap: var(--esp-xs);
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-suave);
+  white-space: nowrap;
 }
 
-.chat-trilha:empty {
-  display: none;
+.caminho-reticencias {
+  flex-shrink: 0;
 }
+
+.caminho-texto {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Linha superior: trilha das perguntas (caminho de pão) */
 
 .chip {
   font-family: var(--fonte-principal);
@@ -539,11 +551,6 @@ body:has(.pagina-home) {
   background: var(--cor-brilho-suave);
 }
 
-/* Chips da trilha ganham uma cor de marca para diferenciá-los
-   dos chips de sugestão */
-.chat-trilha .chip {
-  border-color: var(--cor-destaque);
-}
 
 /* Corpo: indicador "digitando" + resposta atual da Jessy */
 .chat-corpo {
@@ -658,6 +665,8 @@ body:has(.pagina-home) {
   fill: currentColor;
 }
 
+
+
 /* Botão de minimizar (expanded/bar) e ícone do fab */
 .chat-minimizar {
   position: absolute;
@@ -696,69 +705,36 @@ body:has(.pagina-home) {
   fill: currentColor;
 }
 
-/* ----- Estado 1: expandido (padrão da home) ----- */
+/* ----- Estado 1: expandido -----
+   O chat vive SEMPRE no body com position:fixed. Na home o JS o
+   posiciona por cima do #chat-slot (que só reserva o espaço);
+   nas internas a classe .chat--flutuante ancora pelo CSS */
 .chat--expanded {
-  position: relative;
+  position: fixed;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-chat);
+  gap: var(--esp-md);
+  padding: var(--esp-lg) var(--esp-md) var(--esp-md);
+}
+
+/* Ancoragem nas páginas internas: canto inferior direito */
+.chat--expanded.chat--flutuante {
+  left: auto;
+  top: auto;
+  right: var(--esp-md);
+  bottom: var(--esp-md);
+  width: min(var(--largura-chat), calc(100vw - var(--esp-md) * 2));
+}
+
+/* O slot é um fantasma: guarda o lugar do chat no fluxo da home */
+#chat-slot {
   width: 100%;
-  padding: var(--padding-chat-topo) var(--padding-chat) var(--padding-chat);
+  min-height: var(--altura-chat);
 }
 
-/* ----- Estado 2: barra fixa na base da tela ----- */
-.chat--bar {
-  position: fixed;
-  left: var(--margem-barra);
-  right: var(--margem-barra);
-  bottom: var(--margem-barra);
-  margin-inline: auto;
-  max-width: var(--largura-chat-bar);
-  display: flex;
-  align-items: center;
-  gap: var(--gap-trilha);
-  padding: var(--padding-barra);
-  border-radius: var(--raio-pill);
-}
-
-/* Na barra, a trilha fica compacta: uma linha com scroll horizontal */
-.chat--bar .chat-trilha {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  max-width: 40%;
-  scrollbar-width: none;
-}
-
-.chat--bar .chat-trilha .chip {
-  font-size: var(--texto-xs);
-  padding: var(--padding-chip-compacto);
-  white-space: nowrap;
-}
-
-/* A resposta aparece como um painel flutuante acima da barra */
-.chat--bar .chat-corpo {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(100% + var(--gap-trilha));
-  min-height: 0;
-  padding: var(--padding-corpo-chat);
-  border-radius: var(--raio-md);
-  background: var(--cor-fundo);
-  border: 1px solid var(--cor-borda);
-}
-
-.chat--bar .chat-corpo:has(.chat-resposta:empty) {
+/* Na home o chat não fecha: minimizar escondido */
+.chat--na-home .chat-minimizar {
   display: none;
-}
-
-.chat--bar .chat-chips,
-.chat--bar .chat-minimizar {
-  display: none;
-}
-
-.chat--bar .chat-form {
-  flex: 1;
 }
 
 /* ----- Estado 3: botão flutuante (modo leitura) ----- */
@@ -778,7 +754,7 @@ body:has(.pagina-home) {
 }
 
 /* No fab, todo o resto (trilha inclusive) só aparece ao expandir */
-.chat--fab .chat-trilha,
+.chat--fab .chat-caminho,
 .chat--fab .chat-corpo,
 .chat--fab .chat-chips,
 .chat--fab .chat-form,

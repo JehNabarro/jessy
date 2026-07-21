@@ -14,20 +14,20 @@
 // - O Chat Jessy acompanha: fora da home vai para o estado "bar";
 //   de volta à home é reancorado no #chat-slot e expandido
 
-import { definirEstado, definirSlotHome } from './chat.js';
+import { definirEstado, definirContexto, definirSlotHome, registrarNavegacao } from './chat.js';
 
 // ------------------------------------------------------------
 // Registro das páginas: id = id do <template> = hash da URL
 // ------------------------------------------------------------
 const paginas = {
-    home: { titulo: 'Portfolio — Jéssica Nabarro' },
-    projetos: { titulo: 'Projetos — Jéssica Nabarro' },
-    coinple: { titulo: 'Coinple — Jéssica Nabarro' },
-    momentos: { titulo: 'Momentos — Jéssica Nabarro' },
-    diagnostico: { titulo: 'Diagnóstico de Liderança — Jéssica Nabarro' },
-    motorline: { titulo: 'Motorline — Jéssica Nabarro' },
-    sobre: { titulo: 'Quem sou eu — Jéssica Nabarro' },
-    contato: { titulo: 'Contato — Jéssica Nabarro' }
+    home: { titulo: 'Portfolio — Jéssica Nabarro', rotulo: 'Home' },
+    projetos: { titulo: 'Projetos — Jéssica Nabarro', rotulo: 'Projetos' },
+    coinple: { titulo: 'Coinple — Jéssica Nabarro', rotulo: 'Coinple' },
+    momentos: { titulo: 'Momentos — Jéssica Nabarro', rotulo: 'Momentos' },
+    diagnostico: { titulo: 'Diagnóstico de Liderança — Jéssica Nabarro', rotulo: 'Diagnóstico' },
+    motorline: { titulo: 'Motorline — Jéssica Nabarro', rotulo: 'Motorline' },
+    sobre: { titulo: 'Quem sou eu — Jéssica Nabarro', rotulo: 'Sobre' },
+    contato: { titulo: 'Contato — Jéssica Nabarro', rotulo: 'Contato' }
 };
 
 // ------------------------------------------------------------
@@ -122,9 +122,11 @@ export async function navegarPara(id) {
     }
     document.title = paginas[id].titulo;
 
-    // O chat sai do slot da home para a barra ANTES de remover a
-    // hero (o slot vive dentro dela); na volta é reancorado depois
-    if (id !== 'home') definirEstado('bar');
+    // Toda navegação entra no breadcrumb (inclusive voltar)
+    registrarNavegacao(paginas[id].rotulo);
+
+    // Fora da home o chat flutua (e colapsa em fab ao rolar)
+    if (id !== 'home') definirContexto('interna');
 
     const animar = !reducaoMovimento.matches && !primeira;
 
@@ -147,7 +149,7 @@ export async function navegarPara(id) {
     // De volta à home: o chat volta ao slot e expande
     if (id === 'home') {
         definirSlotHome(secao.querySelector('#chat-slot'));
-        definirEstado('expanded');
+        definirContexto('home');
     }
 
     if (animar) animarEntrada(secao);

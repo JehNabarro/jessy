@@ -233,6 +233,8 @@
    --altura-corpo-chat: var(--alt-xs);
    /* reserva mínima do corpo de resposta do chat */
    --altura-fab: var(--alt-sm);
+   /* atura chat */
+   --altura-chat: 320px;
    /* chat em botão flutuante */
    --tamanho-botao-menu: var(--alt-sm);
    /* hambúrguer circular do header */
@@ -250,7 +252,7 @@
    /* contêiner das páginas de conteúdo */
    --largura-drawer: min(220px, 80vw);
    /* menu lateral */
-   --tamanho-preloader: 250px;
+   --tamanho-preloader: 270px;
    /* círculo de vidro da tela splash */
 }
 
@@ -285,6 +287,7 @@
       --topo-header: var(--esp-xl);
       --altura-corpo-chat: var(--alt-lg);
       --altura-fab: 60px;
+      --altura-chat: 320px;
       --largura-chat: 480px;
       --largura-mockups: min(42vw, 80dvh, 560px);
       --largura-conteudo: 1200px;
