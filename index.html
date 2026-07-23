@@ -96,7 +96,7 @@
           <path id="orbita" d="M 150,150 m -120,0 a 120,120 0 1,1 240,0 a 120,120 0 1,1 -240,0" />
         </defs>
         <text>
-          <textPath href="#orbita">
+          <textPath href="#orbita" data-i18n="marca.texto-circular">
             UX / UI DESIGN • JÉSSICA NABARRO • PRODUCT DESIGN • WEB DESIGN • VIBE CODING •
           </textPath>
         </text>
@@ -126,7 +126,7 @@
     <!-- Os hrefs são âncoras reais (#coinple, #sobre...): com JS o
          clique é interceptado pelo router; sem JS continuam válidos -->
     <ul>
-      <li><a href="#home">Home</a></li>
+      <li><a href="#home" data-i18n="nav.home">Home</a></li>
       <li><a href="#projetos" data-i18n="nav.projetos">Projetos</a></li>
       <li><a href="#coinple" data-i18n="nav.coinple">Coinple</a></li>
       <li><a href="#momentos" data-i18n="nav.momentos">Momentos</a></li>
@@ -134,10 +134,19 @@
       <li><a href="#motorline" data-i18n="nav.motorline">Motorline</a></li>
       <li><a href="#sobre" data-i18n="nav.sobre">Quem sou eu</a></li>
       <li><a href="#contato" data-i18n="nav.contato">Contato</a></li>
+      <li>
+        <div class="idiomas">
+          <input type="checkbox" id="toggle-idioma" class="toggle-idioma__input" data-idioma-toggle
+            onchange="window.i18n.definirIdioma(this.checked ? 'en' : 'pt')"
+            aria-label="Trocar idioma / Switch language">
+          <label for="toggle-idioma" class="toggle-idioma">
+            <span class="toggle-idioma__opcao toggle-idioma__opcao--pt">PT</span>
+            <span class="toggle-idioma__opcao toggle-idioma__opcao--en">EN</span>
+            <span class="toggle-idioma__thumb" aria-hidden="true"></span>
+          </label>
+        </div>
+      </li>
     </ul>
-    <div class="idiomas">
-      <button class="botao-idioma glass" type="button" onclick="window.i18n.alternar()">PT / EN</button>
-    </div>
   </nav>
 
   <main>

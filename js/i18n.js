@@ -110,6 +110,10 @@ function aplicar(raiz = document) {
   raiz.querySelectorAll('[data-lang]').forEach((el) => {
     el.hidden = el.getAttribute('data-lang') !== idiomaAtual;
   });
+  // sincroniza o toggle de idioma: marcado = 'en', desmarcado = 'pt'
+  raiz.querySelectorAll('[data-idioma-toggle]').forEach((el) => {
+    el.checked = idiomaAtual === 'en';
+  });
   // reflete no <html lang> apenas quando aplicamos no documento inteiro
   if (raiz === document) {
     document.documentElement.lang = t('geral.locale');

@@ -338,6 +338,21 @@ body.drawer-aberto header {
   z-index: calc(var(--z-drawer) + 1);
 }
 
+
+.botao-idioma {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: var(--padding-chip);
+  border-radius: var(--raio-pill);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+  font: var(--fonte-principal);
+
+}
+
+
 /* ==========================================================
    HOME — mobile-first: coluna única na ordem
    mockups > título > subtítulo > chat
@@ -771,4 +786,130 @@ html.js body:not(.loaded) .chat {
 html.js body.loaded .chat {
   opacity: 1;
   transition: opacity var(--duracao-md) var(--ease-padrao);
+}
+
+
+/* ==========================================================
+   Toggle de idioma (PT / EN)
+   Pílula de vidro com thumb deslizante e brilho lilás da marca
+   ========================================================== */
+.idiomas {
+  display: flex;
+  justify-content: left;
+}
+
+/* input acessível, escondido visualmente (foco preservado) */
+.toggle-idioma__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.toggle-idioma,
+.toggle-idioma * {
+  box-sizing: border-box;
+}
+
+.toggle-idioma {
+  --h: 36px;
+  --pad: 4px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 84px;
+  height: var(--h);
+  padding: var(--pad);
+  border-radius: var(--raio-pill);
+  cursor: pointer;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  box-shadow:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.18),
+    inset -1px -2px 3px rgba(0, 0, 0, 0.45),
+    0 4px 14px var(--cor-sombra);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: box-shadow 0.25s var(--ease-padrao);
+}
+
+.toggle-idioma__opcao {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  text-align: center;
+  font-family: var(--fonte-principal);
+  font-weight: var(--peso-medio);
+  font-size: var(--texto-xs);
+  letter-spacing: 0.08em;
+  line-height: calc(var(--h) - var(--pad) * 2);
+  color: var(--cor-texto-suave);
+  user-select: none;
+  transition: color 0.25s var(--ease-padrao), text-shadow 0.25s var(--ease-padrao);
+}
+
+/* thumb: vidro lilás que desliza e acende o lado ativo */
+.toggle-idioma__thumb {
+  position: absolute;
+  z-index: 1;
+  top: var(--pad);
+  left: var(--pad);
+  width: calc((100% - var(--pad) * 2) / 2);
+  height: calc(var(--h) - var(--pad) * 2);
+  border-radius: var(--raio-pill);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 45%),
+    linear-gradient(180deg, var(--lilas-300), var(--roxo-500));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    0 0 12px rgba(182, 94, 219, 0.55),
+    0 0 22px rgba(182, 94, 219, 0.30);
+  transition: transform 0.32s var(--ease-bounce), box-shadow 0.25s var(--ease-padrao);
+}
+
+/* estado padrão (PT): rótulo PT aceso */
+.toggle-idioma__opcao--pt {
+  color: var(--cor-texto);
+  text-shadow: 0 0 8px rgba(243, 221, 249, 0.5);
+}
+
+/* estado marcado (EN): thumb desliza e troca o lado aceso */
+.toggle-idioma__input:checked+.toggle-idioma .toggle-idioma__thumb {
+  transform: translateX(100%);
+}
+
+.toggle-idioma__input:checked+.toggle-idioma .toggle-idioma__opcao--pt {
+  color: var(--cor-texto-suave);
+  text-shadow: none;
+}
+
+.toggle-idioma__input:checked+.toggle-idioma .toggle-idioma__opcao--en {
+  color: var(--cor-texto);
+  text-shadow: 0 0 8px rgba(243, 221, 249, 0.5);
+}
+
+/* foco por teclado e hover */
+.toggle-idioma__input:focus-visible+.toggle-idioma {
+  outline: 2px solid var(--cor-destaque);
+  outline-offset: 3px;
+}
+
+.toggle-idioma:hover .toggle-idioma__thumb {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    0 0 16px rgba(182, 94, 219, 0.7),
+    0 0 28px rgba(182, 94, 219, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-idioma__thumb {
+    transition: none;
+  }
 }
