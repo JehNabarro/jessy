@@ -761,3 +761,14 @@ body:has(.pagina-home) {
 .chat--fab .chat-minimizar {
   display: none;
 }
+
+/* Chat só aparece junto com a home */
+html.js body:not(.loaded) .chat {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.js body.loaded .chat {
+  opacity: 1;
+  transition: opacity var(--duracao-md) var(--ease-padrao);
+}
