@@ -107,7 +107,7 @@
   <!-- Header fixo com auto-hide (controlado por js/header.js):
        marca à esquerda, botão hambúrguer circular à direita -->
   <header>
-    <a class="marca-link" href="#home" aria-label="Voltar ao início">
+    <a class="marca-link" href="#home" data-i18n-attr="aria-label:header.voltar">
       <svg viewBox="0 0 318 249" aria-hidden="true">
         <use href="#marca-jessica" />
       </svg>
@@ -127,14 +127,17 @@
          clique é interceptado pelo router; sem JS continuam válidos -->
     <ul>
       <li><a href="#home">Home</a></li>
-      <li><a href="#projetos">Projetos</a></li>
-      <li><a href="#coinple">Coinple</a></li>
-      <li><a href="#momentos">Momentos</a></li>
-      <li><a href="#diagnostico">Diagnóstico de Liderança</a></li>
-      <li><a href="#motorline">Motorline</a></li>
-      <li><a href="#sobre">Quem sou eu</a></li>
-      <li><a href="#contato">Contato</a></li>
+      <li><a href="#projetos" data-i18n="nav.projetos">Projetos</a></li>
+      <li><a href="#coinple" data-i18n="nav.coinple">Coinple</a></li>
+      <li><a href="#momentos" data-i18n="nav.momentos">Momentos</a></li>
+      <li><a href="#diagnostico" data-i18n="nav.diagnostico">Diagnóstico de Liderança</a></li>
+      <li><a href="#motorline" data-i18n="nav.motorline">Motorline</a></li>
+      <li><a href="#sobre" data-i18n="nav.sobre">Quem sou eu</a></li>
+      <li><a href="#contato" data-i18n="nav.contato">Contato</a></li>
     </ul>
+    <div class="idiomas">
+      <button class="botao-idioma glass" type="button" onclick="window.i18n.alternar()">PT / EN</button>
+    </div>
   </nav>
 
   <main>
@@ -159,8 +162,8 @@
       </div>
       <div class="home-conteudo">
         <!-- tabindex="-1": o router move o foco para o h1 ao navegar -->
-        <h1 class="home-titulo" id="titulo-home" tabindex="-1">Simplificar o complicado!</h1>
-        <p class="home-subtitulo">Design e Web para negócios em crescimento.</p>
+        <h1 class="home-titulo" id="titulo-home" tabindex="-1" data-i18n="home.titulo">Simplificar o complicado!</h1>
+        <p class="home-subtitulo" data-i18n="home.subtitulo">Design e Web para negócios em crescimento.</p>
         <!-- Slot onde o Chat Jessy é encaixado no estado expandido -->
         <div id="chat-slot"></div>
       </div>
@@ -174,7 +177,7 @@
   <template id="projetos">
     <section class="pagina-conteudo" aria-labelledby="titulo-projetos">
       <article>
-        <h1 id="titulo-projetos" tabindex="-1">Projetos</h1>
+        <h1 id="titulo-projetos" tabindex="-1" data-i18n="nav.projetos">Projetos</h1>
       </article>
     </section>
   </template>
@@ -183,7 +186,7 @@
   <template id="coinple">
     <section class="pagina-conteudo" aria-labelledby="titulo-coinple">
       <article>
-        <h1 id="titulo-coinple" tabindex="-1">Coinple</h1>
+        <h1 id="titulo-coinple" tabindex="-1" data-i18n="nav.coinple">Coinple</h1>
       </article>
     </section>
   </template>
@@ -192,7 +195,7 @@
   <template id="momentos">
     <section class="pagina-conteudo" aria-labelledby="titulo-momentos">
       <article>
-        <h1 id="titulo-momentos" tabindex="-1">Momentos</h1>
+        <h1 id="titulo-momentos" tabindex="-1" data-i18n="nav.momentos">Momentos</h1>
       </article>
     </section>
   </template>
@@ -201,7 +204,7 @@
   <template id="diagnostico">
     <section class="pagina-conteudo" aria-labelledby="titulo-diagnostico">
       <article>
-        <h1 id="titulo-diagnostico" tabindex="-1">Diagnóstico de Liderança</h1>
+        <h1 id="titulo-diagnostico" tabindex="-1" data-i18n="nav.diagnostico">Diagnóstico de Liderança</h1>
       </article>
     </section>
   </template>
@@ -210,7 +213,7 @@
   <template id="motorline">
     <section class="pagina-conteudo" aria-labelledby="titulo-motorline">
       <article>
-        <h1 id="titulo-motorline" tabindex="-1">Motorline</h1>
+        <h1 id="titulo-motorline" tabindex="-1" data-i18n="nav.motorline">Motorline</h1>
       </article>
     </section>
   </template>
@@ -218,14 +221,14 @@
   <!-- Quem sou eu -->
   <template id="sobre">
     <section class="pagina-conteudo" aria-labelledby="titulo-sobre">
-      <h1 id="titulo-sobre" tabindex="-1">Quem sou eu</h1>
+      <h1 id="titulo-sobre" tabindex="-1" data-i18n="nav.sobre">Quem sou eu</h1>
     </section>
   </template>
 
   <!-- Contato -->
   <template id="contato">
     <section class="pagina-conteudo" aria-labelledby="titulo-contato">
-      <h1 id="titulo-contato" tabindex="-1">Contato</h1>
+      <h1 id="titulo-contato" tabindex="-1" data-i18n="nav.contato">Contato</h1>
     </section>
   </template>
 

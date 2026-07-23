@@ -82,7 +82,7 @@ function alternarDrawer(botao, forcarFechar) {
     const abrir = forcarFechar ? false : !document.body.classList.contains('drawer-aberto');
     document.body.classList.toggle('drawer-aberto', abrir);
     botao.setAttribute('aria-expanded', String(abrir));
-    botao.setAttribute('aria-label', abrir ? 'Fechar menu' : 'Abrir menu');
+    botao.setAttribute('aria-label', window.i18n.t(abrir ? 'header.fechar-menu' : 'header.abrir-menu'));
     // Com o drawer aberto o header não pode estar escondido
     if (abrir) header.classList.remove('header--oculto');
 }

@@ -20,57 +20,113 @@
 // a página correspondente ao responder. "sugestoes" troca os chips
 // oferecidos após a resposta (padrão: sugestoesPadrao)
 // ------------------------------------------------------------
-const script = {
-    inicio: {
-        rotulo: 'Início',
-        resposta: 'Olá! Eu sou a assistente da Jéssica Nabarro. Deseja começar por onde?',
-        sugestoes: ['projetos', 'sobre', 'contato', 'coinple']
+const scripts = {
+    pt: {
+        inicio: {
+            rotulo: 'Início',
+            resposta: 'Olá! Eu sou a assistente da Jéssica Nabarro. Deseja começar por onde?',
+            sugestoes: ['projetos', 'sobre', 'contato', 'coinple']
+        },
+        projetos: {
+            rotulo: 'Projetos',
+            pagina: 'projetos',
+            resposta: 'A Jéssica tem 4 cases de UX/UI e Web: Coinple, Momentos, Diagnóstico de Liderança e Motorline. Escolha um abaixo para abrir!',
+            sugestoes: ['coinple', 'momentos', 'diagnostico', 'motorline']
+        },
+        coinple: {
+            rotulo: 'Coinple',
+            pagina: 'coinple',
+            resposta: 'Boa escolha! Abrindo o case do Coinple para você.'
+        },
+        momentos: {
+            rotulo: 'Momentos',
+            pagina: 'momentos',
+            resposta: 'Boa escolha! Abrindo o case do Momentos para você.'
+        },
+        diagnostico: {
+            rotulo: 'Diagnóstico de Liderança',
+            pagina: 'diagnostico',
+            resposta: 'Boa escolha! Abrindo o case do Diagnóstico de Liderança para você.'
+        },
+        motorline: {
+            rotulo: 'Motorline',
+            pagina: 'motorline',
+            resposta: 'Boa escolha! Abrindo o case da Motorline para você.'
+        },
+        sobre: {
+            rotulo: 'Quem é a Jéssica?',
+            pagina: 'sobre',
+            resposta: 'A Jéssica Nabarro é designer de produto e web. Ela simplifica o complicado: transforma processos confusos em interfaces claras para negócios em crescimento. Abrindo a página dela para você.'
+        },
+        contato: {
+            rotulo: 'Contato',
+            pagina: 'contato',
+            resposta: 'Você pode falar com a Jéssica pelo e-mail jeh.nabarro@gmail.com ou pelo LinkedIn. Abrindo a página de contato para você.'
+        },
+        linkedin: {
+            rotulo: 'LinkedIn',
+            resposta: 'Procure por Jéssica Nabarro no LinkedIn. É lá que ela publica projetos e novidades.'
+        },
+        desconhecido: {
+            rotulo: 'Outra pergunta',
+            resposta: 'Hmm, essa eu ainda não sei responder. Tente uma das sugestões abaixo!'
+        }
     },
-    projetos: {
-        rotulo: 'Projetos',
-        pagina: 'projetos',
-        resposta: 'A Jéssica tem 4 cases de UX/UI e Web: Coinple, Momentos, Diagnóstico de Liderança e Motorline. Escolha um abaixo para abrir!',
-        sugestoes: ['coinple', 'momentos', 'diagnostico', 'motorline']
-    },
-    coinple: {
-        rotulo: 'Coinple',
-        pagina: 'coinple',
-        resposta: 'Boa escolha! Abrindo o case do Coinple para você.'
-    },
-    momentos: {
-        rotulo: 'Momentos',
-        pagina: 'momentos',
-        resposta: 'Boa escolha! Abrindo o case do Momentos para você.'
-    },
-    diagnostico: {
-        rotulo: 'Diagnóstico de Liderança',
-        pagina: 'diagnostico',
-        resposta: 'Boa escolha! Abrindo o case do Diagnóstico de Liderança para você.'
-    },
-    motorline: {
-        rotulo: 'Motorline',
-        pagina: 'motorline',
-        resposta: 'Boa escolha! Abrindo o case da Motorline para você.'
-    },
-    sobre: {
-        rotulo: 'Quem é a Jéssica?',
-        pagina: 'sobre',
-        resposta: 'A Jéssica Nabarro é designer de produto e web. Ela simplifica o complicado: transforma processos confusos em interfaces claras para negócios em crescimento. Abrindo a página dela para você.'
-    },
-    contato: {
-        rotulo: 'Contato',
-        pagina: 'contato',
-        resposta: 'Você pode falar com a Jéssica pelo e-mail jeh.nabarro@gmail.com ou pelo LinkedIn. Abrindo a página de contato para você.'
-    },
-    linkedin: {
-        rotulo: 'LinkedIn',
-        resposta: 'Procure por Jéssica Nabarro no LinkedIn. É lá que ela publica projetos e novidades.'
-    },
-    desconhecido: {
-        rotulo: 'Outra pergunta',
-        resposta: 'Hmm, essa eu ainda não sei responder. Tente uma das sugestões abaixo!'
+    en: {
+        inicio: {
+            rotulo: 'Start',
+            resposta: 'Hi! I am Jéssica Nabarro\'s assistant. Where would you like to begin?',
+            sugestoes: ['projetos', 'sobre', 'contato', 'coinple']
+        },
+        projetos: {
+            rotulo: 'Work',
+            pagina: 'projetos',
+            resposta: 'Jéssica has 4 UX/UI and Web cases: Coinple, Momentos, Leadership Diagnostic and Motorline. Pick one below to open it!',
+            sugestoes: ['coinple', 'momentos', 'diagnostico', 'motorline']
+        },
+        coinple: {
+            rotulo: 'Coinple',
+            pagina: 'coinple',
+            resposta: 'EN - Boa escolha! Abrindo o case do Coinple para você.'
+        },
+        momentos: {
+            rotulo: 'Momentos',
+            pagina: 'momentos',
+            resposta: 'EN - Boa escolha! Abrindo o case do Momentos para você.'
+        },
+        diagnostico: {
+            rotulo: 'Diagnóstico de Liderança',
+            pagina: 'diagnostico',
+            resposta: 'EN - Boa escolha! Abrindo o case do Diagnóstico de Liderança para você.'
+        },
+        motorline: {
+            rotulo: 'Motorline',
+            pagina: 'motorline',
+            resposta: 'EN - Boa escolha! Abrindo o case da Motorline para você.'
+        },
+        sobre: {
+            rotulo: 'Quem é a Jéssica?',
+            pagina: 'sobre',
+            resposta: 'EN - A Jéssica Nabarro é designer de produto e web. Ela simplifica o complicado: transforma processos confusos em interfaces claras para negócios em crescimento. Abrindo a página dela para você.'
+        },
+        contato: {
+            rotulo: 'Contato',
+            pagina: 'contato',
+            resposta: 'EN - Você pode falar com a Jéssica pelo e-mail jeh.nabarro@gmail.com ou pelo LinkedIn. Abrindo a página de contato para você.'
+        },
+        linkedin: {
+            rotulo: 'LinkedIn',
+            resposta: 'EN - Procure por Jéssica Nabarro no LinkedIn. É lá que ela publica projetos e novidades.'
+        },
+        desconhecido: {
+            rotulo: 'Outra pergunta',
+            resposta: 'EN - Hmm, essa eu ainda não sei responder. Tente uma das sugestões abaixo!'
+        }
     }
 };
+
+// devolve o roteiro do idioma ativo (fallback: pt)
+function roteiro() { return scripts[window.i18n.idioma] || scripts.pt; }
 
 // Nós oferecidos como chips de sugestão por padrão
 const sugestoesPadrao = ['projetos', 'sobre', 'contato'];
@@ -108,7 +164,7 @@ let contexto = 'home';
 function construirDom() {
     raiz.classList.add('chat', 'glass', 'chat--expanded', 'chat--na-home');
     raiz.innerHTML = `
-    <button class="chat-minimizar" type="button" aria-label="Minimizar chat">&minus;</button>
+    <button class="chat-minimizar" type="button" data-i18n-attr="aria-label:chat.minimizar">&minus;</button>
     <div class="chat-corpo">
       <div class="chat-digitando" hidden aria-hidden="true">
         <span></span><span></span><span></span>
@@ -117,8 +173,8 @@ function construirDom() {
     </div>
     <div class="chat-chips" aria-label="Sugestões"></div>
     <form class="chat-form">
-      <input type="text" placeholder="Faça uma pergunta..." aria-label="Faça uma pergunta" autocomplete="off" />
-      <button class="chat-enviar" type="submit" aria-label="Enviar pergunta">
+        <input type="text" autocomplete="off" data-i18n-attr="placeholder:chat.pergunta-placeholder; aria-label:chat.pergunta-placeholder" />
+      <button class="chat-enviar" type="submit" data-i18n-attr="aria-label:chat.enviar">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
       </button>
     </form>
@@ -126,7 +182,7 @@ function construirDom() {
       <span class="caminho-reticencias" hidden>…</span>
       <span class="caminho-texto"></span>
     </nav>
-    <button class="chat-fab-icone" type="button" aria-label="Abrir chat">
+    <button class="chat-fab-icone" type="button" data-i18n-attr="aria-label:chat.abrir">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
     </button>
   `;
@@ -152,7 +208,7 @@ function construirDom() {
         elInput.value = '';
         const alvo = palavrasChave.find((p) => p.regex.test(texto));
         if (alvo) {
-            perguntar(alvo.no, script[alvo.no].rotulo);
+            perguntar(alvo.no, roteiro()[alvo.no].rotulo);
         } else {
             // Sem correspondência: a Jessy oferece as sugestões e o
             // texto digitado vira o rótulo do chip na trilha
@@ -167,6 +223,8 @@ function construirDom() {
     raiz.querySelector('.chat-fab-icone').addEventListener('click', () => {
         definirEstado(estadoAnterior === 'fab' ? 'expanded' : estadoAnterior);
     });
+
+    window.i18n.aplicar(raiz);
 }
 
 // ------------------------------------------------------------
@@ -179,16 +237,16 @@ function renderizarChips(nos) {
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'chip';
-        chip.textContent = script[no].rotulo;
-        chip.addEventListener('click', () => perguntar(no, script[no].rotulo));
+        chip.textContent = roteiro()[no].rotulo;
+        chip.addEventListener('click', () => perguntar(no, roteiro()[no].rotulo));
         elChips.appendChild(chip);
     }
 }
 
 // Nó com página associada: pede ao router para navegar até ela
 function navegarSeTiverPagina(no) {
-    if (script[no].pagina && window.router) {
-        window.router.navegarPara(script[no].pagina);
+    if (roteiro()[no].pagina && window.router) {
+        window.router.navegarPara(roteiro()[no].pagina);
     }
 }
 
@@ -218,8 +276,8 @@ function perguntar(no, rotulo) {
     // 3. Nova resposta entra (e os chips do nó, se ele definir)
     tl.call(() => {
         elDigitando.hidden = true;
-        elResposta.textContent = script[no].resposta;
-        renderizarChips(script[no].sugestoes || sugestoesPadrao);
+        elResposta.textContent = roteiro()[no].resposta;
+        renderizarChips(roteiro()[no].sugestoes || sugestoesPadrao);
     });
     tl.fromTo(elResposta, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
 }
@@ -413,7 +471,7 @@ export function initChat(elemento, slot) {
     // posicionado por cima do #chat-slot
     document.body.appendChild(raiz);
     posicionarNoSlot();
-    elResposta.textContent = script.inicio.resposta;
+    elResposta.textContent = roteiro().inicio.resposta;
 
     window.jessyChat = { definirEstado, definirContexto, perguntar, registrarNavegacao, definirSlotHome };
 }

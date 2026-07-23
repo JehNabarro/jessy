@@ -7,6 +7,7 @@
 // 3. Iniciar o router, que clona a página inicial a partir do hash
 //    da URL (home por padrão) e assume toda a navegação
 
+import './i18n.js';
 import { initHeader } from './header.js';
 import { initChat } from './chat.js';
 import { initRouter } from './router.js';

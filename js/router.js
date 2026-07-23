@@ -120,10 +120,10 @@ export async function navegarPara(id) {
     if (location.hash !== `#${id}` && !(primeira && id === 'home' && !location.hash)) {
         location.hash = id;
     }
-    document.title = paginas[id].titulo;
+    document.title = window.i18n.t('titulo.' + id);
 
     // Toda navegação entra no breadcrumb (inclusive voltar)
-    registrarNavegacao(paginas[id].rotulo);
+    registrarNavegacao(window.i18n.t('nav.' + id));
 
     // Fora da home o chat flutua (e colapsa em fab ao rolar)
     if (id !== 'home') definirContexto('interna');
@@ -144,6 +144,7 @@ export async function navegarPara(id) {
     if (!secao) return;
     window.scrollTo(0, 0);
     mainEl.prepend(secao);
+    window.i18n.aplicar(secao);
     secaoAtual = secao;
 
     // De volta à home: o chat volta ao slot e expande
@@ -175,7 +176,10 @@ export function initRouter() {
 
     // Botão voltar/avançar e âncoras nativas (ex.: marca do header)
     window.addEventListener('hashchange', () => navegarPara(idDoHash()));
-
+    // Evento que atualizar quando titulo da pagina mudar
+    document.addEventListener('idioma:mudou', () => {
+        if (paginaAtual) document.title = window.i18n.t('titulo.' + paginaAtual);
+    });
     // Página inicial: respeita deep link via hash ou cai na home
     navegarPara(idDoHash());
 
