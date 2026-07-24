@@ -19,7 +19,7 @@ const DICIONARIO = {
     'header.voltar': 'Voltar ao inicio',
     'header.abrir-menu': 'Abrir menu',
     'header.fechar-menu': 'Fechar menu',
-    'nav.home': 'Home',
+    'nav.home': 'Início',
     'nav.projetos': 'Projetos',
     'nav.coinple': 'Coinple',
     'nav.momentos': 'Momentos',

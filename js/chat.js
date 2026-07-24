@@ -310,6 +310,9 @@ window.addEventListener('resize', posicionarNoSlot);
 
 // Desliza o chat até um retângulo-alvo e, ao chegar, entrega a
 // ancoragem para o CSS (classe), limpando o estilo inline
+// Desliza o chat até um retângulo-alvo. Nas internas entrega a
+// ancoragem para o CSS (classe) e limpa o inline; na home mantém
+// o chat preso ao slot pelos estilos inline.
 function deslizarPara(alvo, classeFinal) {
     gsap.to(raiz, {
         left: alvo.left,
@@ -318,8 +321,14 @@ function deslizarPara(alvo, classeFinal) {
         duration: 0.55,
         ease: 'power2.inOut',
         onComplete: () => {
-            if (classeFinal) raiz.classList.add(classeFinal);
-            gsap.set(raiz, { clearProps: 'left,top,width,right,bottom' });
+            if (classeFinal) {
+                // Interna: .chat--flutuante ancora via CSS, o inline pode sair
+                raiz.classList.add(classeFinal);
+                gsap.set(raiz, { clearProps: 'left,top,width,right,bottom' });
+            } else {
+                // Home: sem âncora no CSS, reancora no slot
+                posicionarNoSlot();
+            }
         }
     });
 }
@@ -357,9 +366,23 @@ export function definirContexto(novo) {
             deslizarPara(retanguloFlutuante(), 'chat--flutuante');
         }
     } else {
-        // Volta para a home: reabre no slot, sem flutuar
+        // Volta para a home deslizando do canto de volta ao slot.
+        // Congela a posição atual (o canto, ancorado pelo CSS) em
+        // estilos inline ANTES de tirar a classe, senão o chat salta
+        // para a posição automática do body e o slide parte do lugar errado
+        if (!reducaoMov.matches && slotHome) {
+            const atual = raiz.getBoundingClientRect();
+            gsap.set(raiz, {
+                left: atual.left,
+                top: atual.top,
+                width: atual.width,
+                right: 'auto',
+                bottom: 'auto'
+            });
+        }
         raiz.classList.remove('chat--flutuante');
         if (estado !== 'expanded') definirEstado('expanded', true);
+
         if (reducaoMov.matches || !slotHome) {
             posicionarNoSlot();
         } else {

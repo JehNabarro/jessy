@@ -121,6 +121,14 @@ export function initHeader() {
         });
     }
 
+    // Qualquer clique na tela fecha o drawer.
+    // O botão é ignorado porque ele já faz o toggle sozinho.
+    document.addEventListener('click', (e) => {
+        if (!document.body.classList.contains('drawer-aberto')) return;
+        if (e.target.closest('.botao-menu')) return;
+        if (e.target.closest('#drawer-menu')) return;
+        alternarDrawer(botaoMenu, true);
+    });
     // API global para os overlays de case (que têm scroll próprio)
     // redirecionarem o auto-hide sem importar o módulo
     window.autoHideHeader = { observar: observarScroll };
